@@ -1,0 +1,15 @@
+CREATE DATABASE myDatabase;
+
+USE myDatabase;
+
+CREATE TABLE admins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE minyan_times (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    minyan VARCHAR(50) NOT NULL,
+    times VARCHAR(255) NOT NULL
+);

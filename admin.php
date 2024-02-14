@@ -10,9 +10,9 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
 // Database connection details
 $db_host = 'localhost';
-$db_user = 'root';
-$db_password = 'root';
-$db_name = 'admin_db';
+$db_name = 'myDatabase';
+$db_user = 'eobrmgmy_209e_cg';
+$db_pass = 'Ydavidovici35';
 
 // Create a new database connection
 $conn = new mysqli($db_host, $db_user, $db_password, $db_name);

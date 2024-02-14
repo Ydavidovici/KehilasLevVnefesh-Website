@@ -1,39 +1,38 @@
 <?php
 session_start();
 
+// Database configuration
 $db_host = 'localhost';
-$db_user = 'root';
-$db_password = 'root';
-$db_name = 'admin_db';
+$db_name = 'myDatabase';
+$db_user = 'eobrmgmy_209e_cg';
+$db_pass = 'Ydavidovici35';
 
-$conn = new mysqli($db_host, $db_user, $db_password, $db_name);
+// Connect to the database
+$db = new mysqli($db_host, $db_user, $db_pass, $db_name);
 
-if ($conn->connect_error) {
-    die('Database connection error: ' . $conn->connect_error);
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $sql = "SELECT * FROM admins WHERE username = ?";
-    $stmt = $conn->prepare($sql);
+    // Get the user from the database
+    $stmt = $db->prepare('SELECT * FROM admins WHERE username = ?');
     $stmt->bind_param('s', $username);
     $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
+    $user = $stmt->get_result()->fetch_assoc();
 
+    // Verify the password
     if ($user && password_verify($password, $user['password'])) {
+        // The passwords match, log the user in
         $_SESSION['loggedin'] = true;
-        header('Location: admin.php');
+        header('Location: adminUpdateTimes.php');
         exit;
     } else {
-        $error = 'Invalid username or password';
+        // The passwords do not match, show an error message
+        echo 'Incorrect username or password!';
     }
 }
 ?>
-<!-- Rest of your HTML code -->
-?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

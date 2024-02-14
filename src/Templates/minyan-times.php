@@ -23,10 +23,10 @@
         <p>Stay updated with our latest minyan schedules. Please note times may change for special occasions or holidays.</p>
         <?php
         // Database connection details
-        $servername = "localhost";
-        $username = "username";
-        $password = "password";
-        $dbname = "database";
+        $db_host = 'localhost';
+        $db_name = 'myDatabase';
+        $db_user = 'eobrmgmy_209e_cg';
+        $db_pass = 'Ydavidovici35';
 
         // Create connection
         $conn = new mysqli($servername, $username, $password, $dbname);
