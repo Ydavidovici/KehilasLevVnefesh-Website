@@ -2,20 +2,20 @@
 RewriteEngine On
 
 # Redirect from old URL to new URL
-Redirect 301 /oldpage.html /newpage.html
+# Redirect 301 /oldpage.html /newpage.html
 
 # Password protect a directory
-AuthType Basic
-AuthName "Restricted Area"
-AuthUserFile /path/to/.htpasswd
-Require valid-user
+# AuthType Basic
+# AuthName "Restricted Area"
+# AuthUserFile /path/to/.htpasswd
+# Require valid-user
 
 # Specify a custom 404 page
-ErrorDocument 404 /404.html
+# ErrorDocument 404 /404.html
 
 # Deny access from a specific IP address
-Order Allow,Deny
-Deny from 192.168.1.1
-Allow from all
+# Order Allow,Deny
+# Deny from 192.168.1.1
+# Allow from all
 
 RewriteRule ^admin$ src/admin/adminUpdateTimes.php [L]
