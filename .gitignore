@@ -1,7 +1,7 @@
-.DS-Store
 .docker/
 .npm/
 node_modules/
 npm-debug.log
 example.html
 info.php
+.DS_Store
