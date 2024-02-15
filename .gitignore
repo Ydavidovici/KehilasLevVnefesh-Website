@@ -2,3 +2,6 @@
 .docker/
 .npm/
 node_modules/
+npm-debug.log
+example.html
+info.php
