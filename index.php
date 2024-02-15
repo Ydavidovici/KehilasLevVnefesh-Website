@@ -55,9 +55,9 @@
             <p>Stay updated with our latest minyan schedules.</p>
             <?php
             $db_host = 'localhost';
-            $db_name = 'myDatabase';
+            $db_name = 'eobrmgmy_Database-1';
             $db_user = 'eobrmgmy_209e_cg';
-            $db_pass = 'Ydavidovici35';
+            $db_pass = 'Dalucci35!';
 
             // Create connection
             $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
