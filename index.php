@@ -41,7 +41,7 @@
                 </hgroup>
                 <p>At Kehilas Lev V'Nefesh, we cherish the heart and soul of our community, fostering a warm and welcoming environment for all. Join us in our journey of spiritual growth and communal connection.</p>
                 <figure>
-                    <img src="https://source.unsplash.com/featured/?sunrise,community" alt="Rising Sun" />
+                    <img src="https://source.unsplash.com/featured/?sunrise" alt="Rising Sun" />
                     <figcaption>Inspired by the warmth of the rising sun.</figcaption>
                 </figure>
             </section>
@@ -60,7 +60,7 @@
             $db_pass = 'Ydavidovici35';
 
             // Create connection
-            $conn = new mysqli($servername, $username, $password, $dbname);
+            $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
 
             // Check connection
             if ($conn->connect_error) {
