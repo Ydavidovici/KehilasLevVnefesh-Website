@@ -1,0 +1,44 @@
+/* Base Styles */
+body, p {
+    font-family: Arial, sans-serif; /* Replace with your preferred font */
+    font-size: 16px; /* Replace with your preferred font size */
+    line-height: 1.5; /* Replace with your preferred line spacing */
+}
+
+/* Responsive Buttons */
+.button {
+    padding: 10px 20px; /* Adjust as needed */
+    border-radius: 5px; /* Adjust for more or less rounded corners */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Adjust timing if needed */
+    text-decoration: none; /* Removes underline from link buttons */
+}
+
+.button:hover {
+    background-color: rgb(4, 43, 182); /* Replace with your preferred hover background color */
+    color: #fff; /* Replace with your preferred hover text color */
+}
+
+/* Padding and Space */
+.container {
+    padding: 20px; /* Adjust as needed */
+}
+
+.container > * {
+    margin-bottom: 20px; /* Adjust as needed */
+        background-color: #22056c; /* Replace with your preferred background color */
+        padding: 20px; /* Add some padding around the content */
+        border-radius: 10px; /* Add rounded corners */
+        display: flex; /* Use Flexbox to layout the elements */
+        flex-direction: column; /* Stack the elements vertically */
+        align-items: center; /* Center the elements horizontally */
+}
+
+/* Layout */
+.flex-container {
+    display: flex; /* Creates a flex container */
+    flex-wrap: wrap; /* Allows the flex items to wrap onto multiple lines if needed */
+}
+
+.flex-item {
+    flex: 1; /* Makes all flex items grow and shrink equally */
+}
