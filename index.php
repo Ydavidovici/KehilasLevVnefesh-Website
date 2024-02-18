@@ -3,29 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="Styles.css">    
+    <link rel="stylesheet"  type="text/css" href="./Public/Css/Styles.css">    
     <title>Kehilas Lev V'Nefesh</title>
-    <style>
-        /* Custom styles for the theme of rising sun and fire */
-        body {
-            background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
-            color: #333;
-        }
-        .container {
-            padding: 2rem;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
 </head>
 <body>
     <nav class="container-fluid">
         <ul>
-            <li><strong>Kehilas Lev V'Nefesh</strong></li>
+            <li><strong> Shteible Kehilas Lev V'Nefesh</strong></li>
         </ul>
-        <ul>
+        <ul class="nav-links">
             <li><a href="#minyan-times">Minyan Times</a></li>
             <li><a href="#announcements">Announcements</a></li>
             <li><a href="#about-us">About Us</a></li>
