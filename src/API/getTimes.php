@@ -1,7 +1,7 @@
 <?php
 $db_host = 'localhost';
-$db_name = 'myDatabase';
-$db_user = 'eobrmgmy_209e_cg';
+$db_name = 'eobrmgmy_Database-1';
+$db_user = 'eobrmgmy_user_1';
 $db_pass = 'Ydavidovici35';
 
 // Create connection

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet"  type="text/css" href="./Public/Css/Styles.css">    
+    <link rel="stylesheet"  type="text/css" href="Public/Css/Styles.css">    
     <title>Kehilas Lev V'Nefesh</title>
 </head>
 <body>
@@ -40,10 +40,10 @@
             </hgroup>
             <p>Stay updated with our latest minyan schedules.</p>
             <?php
-            $db_host = 'localhost';
-            $db_name = 'eobrmgmy_Database-1';
-            $db_user = 'eobrmgmy_209e_cg';
-            $db_pass = 'Dalucci35!';
+           $db_host = 'localhost';
+           $db_name = 'eobrmgmy_Database-1';
+           $db_user = 'eobrmgmy_user_1';
+           $db_pass = 'Ydavidovici35';
 
             // Create connection
             $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);

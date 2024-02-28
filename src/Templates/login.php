@@ -3,8 +3,8 @@ session_start();
 
 // Database configuration
 $db_host = 'localhost';
-$db_name = 'myDatabase';
-$db_user = 'eobrmgmy_209e_cg';
+$db_name = 'eobrmgmy_Database-1';
+$db_user = 'eobrmgmy_user_1';
 $db_pass = 'Ydavidovici35';
 
 // Connect to the database
@@ -35,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+<link rel="stylesheet" href="../Public/Css/Styles.css">
 <head>
     <title>Login</title>
 </head>

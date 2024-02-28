@@ -10,8 +10,8 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
 // Database connection details
 $db_host = 'localhost';
-$db_name = 'myDatabase';
-$db_user = 'eobrmgmy_209e_cg';
+$db_name = 'eobrmgmy_Database-1';
+$db_user = 'eobrmgmy_user_1';
 $db_pass = 'Ydavidovici35';
 
 // Create a new database connection
@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="Public/Css/Styles.css">
     <title>Admin - Kehilas Lev V'Nefesh</title>
 </head>
 <body>
