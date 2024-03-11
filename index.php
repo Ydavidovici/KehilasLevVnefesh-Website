@@ -44,7 +44,6 @@
            $db_name = 'eobrmgmy_Database-1';
            $db_user = 'eobrmgmy_user_1';
            $db_pass = 'Ydavidovici35';
-
             // Create connection
             $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
 
@@ -77,7 +76,7 @@
     </section>
     <section id="about-us" class="container">
         <hgroup>
-            <h2>About Us</h2>
+        <h2>About Us</h2> 
         </hgroup>
         <p>
             Kehilas Lev V'Nefesh is a community that cherishes the heart and soul of 
