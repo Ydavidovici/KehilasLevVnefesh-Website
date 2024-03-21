@@ -21,36 +21,6 @@
     <main class="container">
         <h2>Minyan Times</h2>
         <p>Stay updated with our latest minyan schedules. Please note times may change for special occasions or holidays.</p>
-        <?php
-        // Database connection details
-        $db_host = 'localhost';
-        $db_name = 'eobrmgmy_Database-1';
-        $db_user = 'eobrmgmy_user_1';
-        $db_pass = 'Ydavidovici35';
-
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        // SQL query to select data from database
-        $sql = "SELECT time FROM minyan_times";
-        $result = $conn->query($sql);
-
-        if ($result->num_rows > 0) {
-            // Output data of each row
-            while($row = $result->fetch_assoc()) {
-                echo "<p>" . $row["time"]. "</p>";
-            }
-        } else {
-            echo "No minyan times found";
-        }
-
-        $conn->close();
-        ?>
     </main>
     <footer class="container">
         <small>
