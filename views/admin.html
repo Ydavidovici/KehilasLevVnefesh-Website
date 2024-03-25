@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Manage Minyan Times</title>
+    <link rel="stylesheet" href="../Public/Css/Styles.css">
+</head>
+<body>
+    <header>
+        <h1>Admin Panel</h1>
+    </header>
+
+    <main>
+        <section id="addMinyanTime">
+            <h2>Add New Minyan Time</h2>
+            <form id="minyanTimeForm">
+                <div>
+                    <label for="minyanName">Minyan Name:</label>
+                    <input type="text" id="minyanName" name="minyanName" required>
+                </div>
+                <div>
+                    <label for="minyanTime">Time:</label>
+                    <input type="time" id="minyanTime" name="minyanTime" required>
+                </div>
+                <button type="submit">Add Minyan Time</button>
+            </form>
+        </section>
+
+        <section id="currentMinyanTimes">
+            <h2>Current Minyan Times</h2>
+            <div id="minyanTimesList">
+                <!-- Minyan times will be dynamically inserted here -->
+            </div>
+        </section>
+    </main>
+
+    <script src="../Public/Js/admin.js"></script>
+</body>
+</html>
