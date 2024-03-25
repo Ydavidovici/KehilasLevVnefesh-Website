@@ -2,84 +2,88 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 
-
-
-
 body {
-    background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
-    margin: 0; /* Removes default margin */
-    padding: 0; /* Removes default padding */
-    box-sizing: border-box; /* Makes sure padding and border are included in the element's total width and height */
-    font-family: 'Roboto', sans-serif; 
+    background: linear-gradient(120deg, #ff9a8b 0%, #ff6a88 99%, #ff99ac 100%);
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6{
-    color: #f116c9; /* Replace with your preferred text color */
-    font-family: Arial, sans-serif; /* Replace with your preferred font */
-    font-weight: bold; /* Makes the text bold */
-    line-height: 1.5; /* Replace with your preferred line spacing */
+h1, h2, h3, h4, h5, h6 {
+    color: #333; /* Dark grey for a softer look */
     font-family: 'Playfair Display', serif;
+    font-weight: bold;
+    line-height: 1.5;
     text-align: center;
 }
+
 p {
-    color: #16f1d4;
-    font-family: 'Roboto', sans-serif; /* Replace with your preferred font */
-    font-size: 16px; /* Replace with your preferred font size */
-    line-height: 1.5; /* Replace with your preferred line spacing */
+    color: #555; /* Soft grey for text */
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
     text-align: center;
     padding: 10px;
 }
 
-
-
 .container {
-    padding: 2rem;
+    padding: 2rem 0; /* Remove horizontal padding */
     text-align: center;
 }
 
 .container > * {
     margin-bottom: 2rem;
-    background: #041dbe;
+    background: #ff7e5f; /* Softer fire color */
+    color: #fff; /* White text for contrast */
     padding: 1rem;
-    border-radius: 10px; /* Increase this value to make the corners more rounded */
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 li strong {
-    position: relative;
-    text-align: center ;
-    color: #1dbf40; /* Replace with your preferred text color */
+    color: #fcd670; /* Gold color for highlights */
     font-size: 30px;
-    top: 10px;
-    text-decoration: none;
+}
+
+/* Navigation Bar Container Styles */
+.nav-container {
+    height: 40px;
+    width: calc(100% - 40px); /* Full width minus padding on both sides */
+    margin: 10px 20px; /* 20px margin on both sides */
+    padding: 10px 0; /* Padding at the top and bottom of the nav bar */
+    background-color: rgba(255, 174, 0, 0.85); /* Soft, semi-transparent orange */
+    border-radius: 10px; /* Rounded corners for the rectangular nav bar */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    position: fixed; /* Ensures the nav bar is always on top */
+    top: 0;
+    left: 0; /* Align to the left edge of the viewport */
+    right: 0; /* Align to the right edge of the viewport */
+    z-index: 1000; /* Ensures nav is above other content */
+    display: flex; /* Use flexbox to center the navigation links */
+    justify-content: center; /* Center items horizontally */
+    align-items: center; /* Center items vertically */
 }
 
 .nav-links {
-    display: inline;
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
-    flex-direction: row;
     gap: 30px;
 }
 
 .nav-links a {
-    padding: 10px 20px; /* Adjust as needed */
-    border-radius: 5px; /* Adjust for more or less rounded corners */
-    transition: background-color 0.3s ease, color 0.3s ease; /* Adjust timing if needed */
-    text-decoration: none; /* Removes underline from link buttons */
-    color: #000000b3; /* Change to your preferred color */
-    font-weight: thin; /* Makes the text bold */
-    font-size: 20px; /* Change to your preferred font size */
-
+    color: #fff; /* White text color */
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s ease;
 }
 
 .nav-links a:hover {
-    background-color: rgb(4, 43, 182); /* Replace with your preferred hover background color */
-    color: #fff; /* Replace with your preferred hover text color */
+    color: #ffd700; /* Gold color on hover */
 }
 
 
@@ -88,10 +92,63 @@ img {
     height: auto;
 }
 
-
 #welcome figure img {
-    display: block;
     margin-left: auto;
     margin-right: auto;
-    max-width: 100%; /* Ensures the image doesn't overflow its container */
+    display: block;
+}
+
+/* Enhance the fire theme background */
+body {
+    background: linear-gradient(120deg, #ff6a88 0%, #ff9966 50%, #ff5e62 100%);
+}
+
+/* Updated container and general element styles for a modern look */
+.container, .file-display {
+    margin: 20px auto; /* Center the containers */
+    padding: 15px;
+    background: rgba(255, 98, 0, 0.8); /* Fiery background */
+    color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow */
+    max-width: 90%; /* Ensuring it doesn't stretch too wide on larger screens */
+    transition: transform 0.3s ease; /* Smooth scaling on hover */
+}
+
+.container:hover, .file-display:hover {
+    transform: scale(1.02); /* Slightly enlarge on hover for a dynamic effect */
+}
+
+/* Updated navigation and links for a fiery theme */
+.nav-links a:hover, .nav-links a:focus {
+    background-color: rgba(255, 165, 0, 0.9); /* Fiery orange background on hover */
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* Hidden class for initially invisible elements */
+.hidden {
+    display: none;
+}
+
+/* Additional styling for uploaded file display */
+.file-display {
+    text-align: left; /* Aligning text to the left for a cleaner look */
+    padding: 20px;
+}
+
+/* Ensure images within the file display are well-styled */
+.file-display img {
+    border-radius: 10px; /* Rounded corners for images */
+    margin-top: 15px; /* Space above images */
+}
+
+.contact-info {
+    text-align: center;
+}
+
+
+.contact-info ul {
+    list-style-type: none;
+    padding: 0;
 }
