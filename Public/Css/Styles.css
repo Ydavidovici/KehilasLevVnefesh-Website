@@ -90,3 +90,57 @@ section {
     list-style-type: none;
     padding: 0;
 }
+
+
+/* Admin-specific Styles */
+
+#addMinyanTime, #currentMinyanTimes {
+    background: rgba(255, 255, 255, 0.9); /* Light background for content sections */
+    border-radius: 10px; /* Rounded corners for sections */
+    padding: 20px; /* Padding inside sections */
+    margin: 20px auto; /* Center sections and provide some margin */
+    width: 80%; /* Adjust width as needed */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* Soft shadow for depth */
+}
+
+#minyanTimeForm {
+    display: flex;
+    flex-direction: column; /* Stack form elements vertically */
+    gap: 10px; /* Space between form elements */
+}
+
+#minyanTimeForm input[type="text"],
+#minyanTimeForm input[type="time"] {
+    padding: 10px; /* Padding inside input fields for better readability */
+    border: 1px solid #ddd; /* Subtle border for inputs */
+    border-radius: 5px; /* Slightly rounded corners for inputs */
+    width: calc(100% - 22px); /* Adjust width to account for padding and border */
+}
+
+#minyanTimeForm button {
+    background-color: #ff5e62; /* Button color that matches the theme */
+    color: #ffffff; /* White text for contrast */
+    padding: 10px 20px;
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners for the button */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+#minyanTimeForm button:hover {
+    background-color: #ff6a88; /* Slightly lighter color on hover */
+}
+
+/* Styles for displaying the current minyan times list */
+#minyanTimesList {
+    display: flex;
+    flex-direction: column; /* Stack list items vertically */
+    gap: 5px; /* Space between list items */
+}
+
+.minyanTimeItem {
+    background: #f0f0f0; /* Light background for each item */
+    border-radius: 5px; /* Rounded corners for list items */
+    padding: 10px; /* Padding inside list items */
+    border-left: 5px solid #ff5e62; /* Accent border on the left */
+}
