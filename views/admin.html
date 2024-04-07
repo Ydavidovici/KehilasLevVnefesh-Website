@@ -35,15 +35,23 @@
                 <button type="submit">Add Minyan Time</button>
             </form>
         </section>
-
         <section id="currentMinyanTimes">
             <h2>Current Minyan Times</h2>
-            <div id="minyanTimesList">
-                <!-- Minyan times will be dynamically inserted here -->
-            </div>
+            <!-- Minyan times will be dynamically inserted into this div -->
+            <div id="minyanTimesList"></div>
+            <button id="clearMinyanTimes">Clear All Minyan Times</button>
+        </section>
+        <section id="fileUpload">
+            <h2>Upload File</h2>
+            <form id="fileUploadForm" action="/file/upload" method="post" enctype="multipart/form-data">
+                <div>
+                    <label for="fileInput">Select a file:</label>
+                    <input type="file" id="fileInput" name="fileInput" required>
+                </div>
+                <button type="submit">Upload File</button>
+            </form>
         </section>
     </main>
-
     <script src="../Public/js/main.js"></script>
 </body>
 </html>

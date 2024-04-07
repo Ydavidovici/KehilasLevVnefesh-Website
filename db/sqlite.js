@@ -16,6 +16,17 @@ function initializeTables(db) {
         username TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL
     )`, errorHandler);
+
+    // New table for file uploads
+    db.run(`CREATE TABLE IF NOT EXISTS file_uploads (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        originalname TEXT NOT NULL,
+        mimetype TEXT NOT NULL,
+        destination TEXT NOT NULL,
+        filename TEXT NOT NULL,
+        path TEXT NOT NULL,
+        size INTEGER NOT NULL
+    )`, errorHandler);
 }
 
 function seedAdmins(db) {
