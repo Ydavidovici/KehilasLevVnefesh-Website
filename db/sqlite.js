@@ -1,12 +1,13 @@
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const path = require('path');
-const dbPath = path.join(__dirname, 'minyan.db');
+const dbPath = path.join(__dirname, 'db/minyanim.db');
 
 // Function definitions first
 function initializeTables(db) {
     db.run(`CREATE TABLE IF NOT EXISTS minyan_times (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        day TEXT NOT NULL,
         name TEXT NOT NULL,
         time TEXT NOT NULL
     )`, errorHandler);

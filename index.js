@@ -1,8 +1,8 @@
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-const cors = require('cors'); // Import CORS module
-require('dotenv').config(); // Import dotenv to manage environment variables
+const cors = require('cors');
+require('dotenv').config(); 
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -14,6 +14,8 @@ app.use(session({
   saveUninitialized: false,
   cookie: { secure: 'auto' } // Adjust for HTTPS in production
 }));
+
+app.use(express.static(path.join(__dirname, 'Public')));
 
 app.use(express.json());
 app.use(express.static('public'));
@@ -34,7 +36,7 @@ app.use((req, res) => {
 
 app.get('/', (req, res) => {
     console.log('Serving the main page.');
-    res.sendFile(path.join(__dirname, 'views', 'index.html'), (err) => {
+    res.sendFile(path.join(__dirname, 'Public','html', 'index.html'), (err) => {
         if (err) {
             console.log('Error sending index.html', err);
             res.status(500).send('An error occurred');

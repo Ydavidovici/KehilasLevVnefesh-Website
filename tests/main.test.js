@@ -1,58 +1,63 @@
-const fetchMock = require('jest-fetch-mock');
-const { JSDOM } = require('jsdom');
+it('Submits form and adds new minyan time', async () => {
+    setAsAdminPage(true);
+    require('../Public/js/main');
 
-// Mock the fetch API
-fetchMock.enableMocks();
+    const form = document.getElementById('minyanTimeForm');
+    form.dispatchEvent(new Event('submit'));
 
-describe('DOM Manipulation and AJAX Requests', () => {
-    beforeEach(() => {
-        // Set up our document body
-        document.body.innerHTML =
-            '<div>' +
-            '  <form id="minyanTimeForm">' +
-            '    <input id="minyanName" value="Test Minyan">' +
-            '    <input id="minyanTime" value="08:00">' +
-            '  </form>' +
-            '  <div id="minyanTimesList"></div>' +
-            '</div>';
+    await new Promise(process.nextTick);
 
-        // Reset all mocks before each test
-        fetch.resetMocks();
-    });
+    // Ensure fetch was called for adding
+    expect(fetch).toHaveBeenCalledWith('http://localhost:4000/api/minyan/add', expect.objectContaining({
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ name: 'Morning Prayer', time: '08:00' })
+    }));
 
-    it('should add a new minyan and refresh the list of minyan times', async () => {
-        // Mock the fetch responses
-        fetch.mockResponses(
-            [JSON.stringify({ id: 1, name: 'Test Minyan', time: '08:00' }), { status: 200 }],
-            [JSON.stringify([{ id: 1, name: 'Test Minyan', time: '08:00' }]), { status: 200 }]
-        );
+    // Refresh list check
+    expect(fetch).toHaveBeenCalledTimes(2); // One for initial list, one for add
+});
 
-        require('../Public/js/main');
+it('Fetches minyan times and populates list', async () => {
+    setAsAdminPage(true);
+    require('../Public/js/main');
 
-        // Simulate form submission
-        const form = document.getElementById('minyanTimeForm');
-        const event = new Event('submit');
-        form.dispatchEvent(event);
+    await new Promise(process.nextTick);
 
-        // Wait for fetches to resolve
-        await Promise.resolve();
+    // Ensure fetch was called for listing
+    expect(fetch).toHaveBeenCalledWith('http://localhost:4000/api/minyan/list');
 
-        // Check that the minyan times list was updated
-        const list = document.getElementById('minyanTimesList');
-        expect(list.textContent).toContain('Test Minyan at 08:00');
-    });
+    const minyanList = document.getElementById('minyanTimesList');
+    expect(minyanList.children.length).toBeGreaterThan(0);
+    expect(minyanList.textContent).toContain('Morning Prayer at 08:00');
+});
 
-    it('should display a message if no minyanim found', async () => {
-        // Mock the fetch response
-        fetch.mockResponseOnce(JSON.stringify([]), { status: 200 });
+it('Deletes minyan time when delete button clicked', async () => {
+    setAsAdminPage(true);
+    require('../Public/js/main');
 
-        require('../Public/js/main'); // Import your main.js file
+    // Simulate initial list fetching
+    await new Promise(process.nextTick);
 
-        // Wait for fetch to resolve
-        await Promise.resolve();
+    // Assuming your delete button is appended after fetch
+    const deleteButton = document.querySelector('.minyan-time button');
+    deleteButton.dispatchEvent(new Event('click'));
 
-        // Check that the no minyanim message is displayed
-        const list = document.getElementById('minyanTimesList');
-        expect(list.textContent).toBe('No current minyanim.');
-    });
+    // Check if the delete fetch call was made
+    expect(fetch).toHaveBeenCalledWith(expect.stringContaining('delete'), expect.objectContaining({
+        method: 'DELETE'
+    }));
+});
+
+it('Clears all minyan times when clear button clicked', async () => {
+    setAsAdminPage(true);
+    require('../Public/js/main');
+
+    const clearButton = document.getElementById('clearMinyanTimes');
+    clearButton.dispatchEvent(new Event('click'));
+
+    // Check if the clear fetch call was made
+    expect(fetch).toHaveBeenCalledWith('http://localhost:4000/api/minyan/clear', expect.objectContaining({
+        method: 'POST'
+    }));
 });
