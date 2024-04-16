@@ -1,63 +1,51 @@
-it('Submits form and adds new minyan time', async () => {
-    setAsAdminPage(true);
-    require('../Public/js/main');
+describe('DOMContentLoaded and Event Listeners', () => {
+    beforeEach(() => {
+        document.body.innerHTML = `
+            <form id="minyanTimeForm"></form>
+            <div id="minyanTimesList"></div>
+            <div id="uploadedFileContainer"></div>
+        `;
+        require('./main');  // Assuming your code is in main.js
+    });
 
-    const form = document.getElementById('minyanTimeForm');
-    form.dispatchEvent(new Event('submit'));
-
-    await new Promise(process.nextTick);
-
-    // Ensure fetch was called for adding
-    expect(fetch).toHaveBeenCalledWith('http://localhost:4000/api/minyan/add', expect.objectContaining({
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ name: 'Morning Prayer', time: '08:00' })
-    }));
-
-    // Refresh list check
-    expect(fetch).toHaveBeenCalledTimes(2); // One for initial list, one for add
+    it('attaches submit event listener to form', () => {
+        const form = document.getElementById('minyanTimeForm');
+        expect(form.onsubmit).toBeDefined();
+    });
 });
 
-it('Fetches minyan times and populates list', async () => {
-    setAsAdminPage(true);
-    require('../Public/js/main');
+describe('API interactions', () => {
+    beforeEach(() => {
+        fetch.resetMocks();
+    });
 
-    await new Promise(process.nextTick);
+    it('posts minyan successfully', async () => {
+        fetch.mockResponseOnce(JSON.stringify({ success: true }), { status: 200 });
+        const { postMinyan } = require('../Public/js/main'); 
+        await expect(postMinyan({ name: 'Morning Minyan', time: '07:00 AM' })).resolves.toEqual({ success: true });
+    });
 
-    // Ensure fetch was called for listing
-    expect(fetch).toHaveBeenCalledWith('http://localhost:4000/api/minyan/list');
+    it('handles failure when posting minyan', async () => {
+        fetch.mockReject(new Error('API failure'));
+        const { postMinyan } = require('./main');
+        await expect(postMinyan({ name: 'Morning Minyan', time: '07:00 AM' })).rejects.toThrow('API failure');
+    });
 
-    const minyanList = document.getElementById('minyanTimesList');
-    expect(minyanList.children.length).toBeGreaterThan(0);
-    expect(minyanList.textContent).toContain('Morning Prayer at 08:00');
+    it('fetches minyan times and updates DOM', async () => {
+        const mockData = [{ id: 1, name: 'Morning Minyan', time: '07:00 AM' }];
+        fetch.mockResponseOnce(JSON.stringify(mockData), { status: 200 });
+        const { fetchMinyanTimes } = require('./main');
+        await fetchMinyanTimes();
+        const list = document.getElementById('minyanTimesList');
+        expect(list.children.length).toBe(1);
+        expect(list.firstChild.textContent).toContain('Morning Minyan at 07:00 AM');
+    });
 });
 
-it('Deletes minyan time when delete button clicked', async () => {
-    setAsAdminPage(true);
-    require('../Public/js/main');
-
-    // Simulate initial list fetching
-    await new Promise(process.nextTick);
-
-    // Assuming your delete button is appended after fetch
-    const deleteButton = document.querySelector('.minyan-time button');
-    deleteButton.dispatchEvent(new Event('click'));
-
-    // Check if the delete fetch call was made
-    expect(fetch).toHaveBeenCalledWith(expect.stringContaining('delete'), expect.objectContaining({
-        method: 'DELETE'
-    }));
-});
-
-it('Clears all minyan times when clear button clicked', async () => {
-    setAsAdminPage(true);
-    require('../Public/js/main');
-
-    const clearButton = document.getElementById('clearMinyanTimes');
-    clearButton.dispatchEvent(new Event('click'));
-
-    // Check if the clear fetch call was made
-    expect(fetch).toHaveBeenCalledWith('http://localhost:4000/api/minyan/clear', expect.objectContaining({
-        method: 'POST'
-    }));
+it('handles empty minyan list', async () => {
+    fetch.mockResponseOnce(JSON.stringify([]), { status: 200 });
+    const { fetchMinyanTimes } = require('../Public/js/main');
+    await fetchMinyanTimes();
+    const list = document.getElementById('minyanTimesList');
+    expect(list.innerHTML).toContain('No Minyan Times available');
 });

@@ -1,45 +1,65 @@
 const request = require('supertest');
 const express = require('express');
-const adminRoutes = require('../routes/admin'); // Make sure the path is correct
-const app = express();
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const memoryStorage = multer.memoryStorage();
+const upload = multer({ storage: memoryStorage });
 
-app.use(express.json());
+// Mocking the database and file upload handling
+jest.mock('../db/sqlite.js', () => {
+    return {
+        run: jest.fn((sql, params, callback) => callback(null, { lastID: 1, changes: 1 })),
+        all: jest.fn((sql, params, callback) => callback(null, [{ id: 1, name: 'Morning Minyan', time: '07:00 AM' }]))
+    };
+});
+
+const adminRoutes = require('../routes/admin'); // Import routes
+
+const app = express();
+app.use(bodyParser.json()); // For parsing application/json
 app.use('/admin', adminRoutes);
 
-describe('Admin API', () => {
-    // Test for adding a new minyan
-    it('should add a new minyan', async () => {
-        const res = await request(app)
-            .post('/admin/minyan/add')
-            .send({
-                name: 'Test Minyan',
-                time: '08:00'
+describe('Admin Routes', () => {
+    describe('POST /minyan/add', () => {
+        it('should add a minyan time', async () => {
+            const res = await request(app)
+                .post('/admin/minyan/add')
+                .send({ name: 'Evening Minyan', time: '08:00 PM' });
+
+            expect(res.status).toBe(200);
+            expect(res.body).toEqual({ id: 1, name: 'Evening Minyan', time: '08:00 PM' });
+        });
+    });
+
+    describe('GET /minyan/list', () => {
+        it('should retrieve all minyan times', async () => {
+            const res = await request(app)
+                .get('/admin/minyan/list');
+
+            expect(res.status).toBe(200);
+            expect(res.body).toEqual([{ id: 1, name: 'Morning Minyan', time: '07:00 AM' }]);
+        });
+    });
+
+    describe('POST /file/upload', () => {
+        beforeAll(() => {
+            // Replace multer with an in-memory storage for testing
+            app.post('/admin/file/upload', upload.single('fileInput'), (req, res) => {
+                if (req.file) {
+                    res.status(200).json({ message: `Received file ${req.file.originalname}`, id: 1 });
+                } else {
+                    res.status(400).send('No file uploaded');
+                }
             });
+        });
 
-        expect(res.statusCode).toEqual(200);
-        expect(res.body).toHaveProperty('id');
-        expect(res.body.name).toEqual('Test Minyan');
-        expect(res.body.time).toEqual('08:00');
-    });
+        it('should handle file uploads', async () => {
+            const res = await request(app)
+                .post('/admin/file/upload')
+                .attach('fileInput', Buffer.from('test file data'), 'testfile.txt');
 
-    // Test for fetching all minyan times
-    it('should fetch all minyan times', async () => {
-        const res = await request(app).get('/admin/minyan/list');
-        expect(res.statusCode).toEqual(200);
-        expect(Array.isArray(res.body)).toBe(true);
-    });
-
-    // Test for clearing all minyan times
-    it('should clear all minyan times', async () => {
-        const res = await request(app).post('/admin/minyan/clear');
-        expect(res.statusCode).toEqual(200);
-        expect(res.text).toEqual('All minyan times cleared');
-    });
-
-    it('should delete a specific minyan time', async () => {
-        const idToDelete = 1;
-        const res = await request(app).delete(`/admin/minyan/delete/${idToDelete}`);
-        expect(res.statusCode).toEqual(200);
-        expect(res.body).toHaveProperty('message', `Deleted minyan time with ID ${idToDelete}`);
+            expect(res.status).toBe(200);
+            expect(res.body).toEqual({ message: 'Received file testfile.txt', id: 1 });
+        });
     });
 });

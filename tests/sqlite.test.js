@@ -1,34 +1,48 @@
 const sqlite3 = require('sqlite3').verbose();
+const bcrypt = require('bcrypt');
+const path = require('path');
 
-describe('SQLite database tests', () => {
-    let db;
+// Use an in-memory database for testing
+const db = new sqlite3.Database(':memory:', (err) => {
+    if (err) console.error('Error opening database:', err.message);
+});
 
-    beforeAll(done => {
-        // Initialize in-memory database
-        db = new sqlite3.Database(':memory:', done);
+// Re-import or redefine your functions for initializing tables and seeding data here
+// It’s a good idea to modularize your functions in `sqlite.js` so you can import them directly
+const { initializeTables, seedAdmins } = require('../db/sqlite');
 
-        // Create tables
+describe('SQLite Database Tests', () => {
+    beforeAll((done) => {
+        // Ensure tables are created and admins are seeded before any tests run
         db.serialize(() => {
-            db.run(`CREATE TABLE IF NOT EXISTS minyan_times (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                time TEXT NOT NULL
-            )`, done);
+            initializeTables(db);
+            seedAdmins(db, done); // Make sure seedAdmins can accept a callback to signal completion
         });
     });
 
-    afterAll(() => {
-        // Close the database connection
-        db.close();
-    });
-
-    it('should insert a new minyan time', done => {
-        // This test might need an increased timeout
-        const sql = `INSERT INTO minyan_times (name, time) VALUES (?, ?)`;
-        db.run(sql, ['Test Minyan', '08:00'], function(err) {
+    test('should create tables without error', (done) => {
+        db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='minyan_times'", (err, row) => {
             expect(err).toBeNull();
-            expect(this.lastID).toBeDefined();
-            done(); // Signal Jest that the test is complete
+            expect(row.name).toBe('minyan_times');
+            done();
         });
-    }, 10000); // Increased timeout if needed
+    });
+
+    test('should insert admin users with hashed passwords', (done) => {
+        db.get("SELECT * FROM admins WHERE username = 'admin1'", (err, row) => {
+            expect(err).toBeNull();
+            expect(row).toBeDefined();
+            bcrypt.compare('adminPassword1', row.password, (err, result) => {
+                expect(result).toBe(true);
+                done();
+            });
+        });
+    });
+
+    // Add more tests as needed for other tables and functionalities
+
+    afterAll((done) => {
+        // Close the database after all tests
+        db.close(done);
+    });
 });
