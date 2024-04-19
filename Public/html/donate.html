@@ -3,51 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Donate</title>
+    <title>Donate - Kehilas Lev V'Nefesh</title>
     <link rel="stylesheet" type="text/css" href="../Css/Styles.css">
 </head>
-<body>
+<body class="main-container">
     <header>
         <div class="nav-container">
             <nav class="nav">
                 <ul class="nav-links">
                     <li><a href="index.html">Home</a></li>
                     <li><a href="minyan-times.html">Minyan Times</a></li>
-                    <li><a href="donate.html">Donate/Sponsor</a></li>
-                    <li><a href="#aboutUs">About Us</a></li>
+                    <li><a href="donate.html" class="active">Donate/Sponsor</a></li>
                     <li><a href="contact.html">Contact Us</a></li>
                 </ul>
             </nav>
         </div>        
     </header>
-    <div class="container">
-        <div class="header">
+    <main class="main-container">
+        <section id="donation-section">
             <h2>Donate</h2>
+            <p class="description">
+                Your generous contribution supports our community activities and services. Every donation helps us continue our mission.
+            </p>
+            <div class="donation-links">
+                <a href="https://donate.stripe.com/test_9AQfZh76Uatc2Kk5kk" target="_blank">Donate with Stripe</a>
+                <a href="https://www.paypal.com/donate?hosted_button_id=YOUR_PAYPAL_ID" target="_blank">Donate with PayPal</a>
+                <p>Or donate with Zelle: kehilaslevvnefesh@gmail.com</p>
+            </div>
+        </section>
+        <div class="section-container">
+            <section id="sponsorship-section">
+                <h2>Sponsorship Options</h2>
+                <p class="description">
+                    Consider sponsoring an event or program at Kehilas Lev V'Nefesh. Below are the sponsorship opportunities currently available.
+                </p>
+                <div id="sponsorshipOptions">
+                    <!-- Sponsorship options will be inserted dynamically here with JavaScript -->
+                </div>
+            </section>
         </div>
-        <div>
-            <a href="https://donate.stripe.com/test_9AQfZh76Uatc2Kk5kk" target="_blank">Donate</a>
-        </div>
-        <div class="header">
-            <h2>Sponsorship Options</h2>
-        </div>
-        <div>
-            <a href="https://your-stripe-payment-link-for-sponsorship-option-1" target="_blank">Parnes Hachodesh</a>
-        </div>
-        <div>
-            <a href="https://your-stripe-payment-link-for-sponsorship-option-2" target="_blank">Parnes Hashavua</a>
-        </div>
-        <div>
-            <a href="https://your-stripe-payment-link-for-sponsorship-option-3" target="_blank">Hot Kiddush</a>
-        </div>
-        <div>
-            <a href="https://your-stripe-payment-link-for-sponsorship-option-4" target="_blank">Cold Kiddush</a>
-        </div>
-    </div>
+    </main>
     <footer>
-        <p>&copy; All rights reserved.</p>
+        <p>&copy; Kehilas Lev V'Nefesh 2024, All rights reserved.</p>
     </footer>
 
-    <script src="../Public/js/main.js"></script>
+    <script src="../js/main.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
 </body>
 </html>

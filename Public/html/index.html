@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Synagogue Minyan Times</title>
+    <title>Kehilas Lev V'Nefesh - Homepage</title>
     <link rel="stylesheet" href="../Css/Styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="main-container">
     <header>
         <div class="nav-container">
             <nav class="nav">
@@ -14,26 +15,16 @@
                     <li><a href="index.html">Home</a></li>
                     <li><a href="minyan-times.html">Minyan Times</a></li>
                     <li><a href="donate.html">Donate/Sponsor</a></li>
-                    <li><a href="#aboutUs">About Us</a></li>
                     <li><a href="contact.html">Contact Us</a></li>
                 </ul>
             </nav>
         </div>        
     </header>
     <main>
-        <div class="container">
             <h1>Kehilas Lev V'Nefesh</h1>
-
-            <section id="minyanTimes">
-                <h2>Minyan Times</h2>
-                <div id="minyanTimesList"><!-- Minyan times will be dynamically inserted here --></div>
-            </section>
-            <section>
-                <h2>Uploaded File</h2>
-                <div id="uploadedFileContainer"><!-- Uploaded file will be dynamically inserted here --></div>
-            </section>
-            <section id="aboutUs">
-                <h2>About Us</h2>
+            <div class="section-container" id="aboutUs">
+                <h4>About Us</h4>
+                <div class="paragraph-container">
                 <p>
                     Welcome to Kehilas Lev V'Nefesh
 
@@ -43,9 +34,11 @@
                     core mission—a shul for everyone, where the essence of 
                     Jewish life pulsates through every service, program, and gathering.
                 </p>  
-                <h4>
-                    Our Mission
-                </h4>
+                </div>
+            </div>
+            <div class="section-container" id="our-mission">
+                <h4>Our Mission</h4>
+                <div class="paragraph-container">
                 <p>    
                     At Kehilas Lev V'Nefesh, we believe that the doors to 
                     spirituality and community should be open to all, regardless of 
@@ -56,9 +49,13 @@
                     supportive environment that encourages meaningful connections, 
                     spiritual exploration, and personal growth.
                 </p>  
+                </div>
+            </div>
+            <div class="section-container" id="our-beginnings">
                 <h4>
                     Our Beginnings
                 </h4> 
+                <div class="paragraph-container">
                 <p>  
                     Founded during the challenging times of COVID-19, Kehilas Lev 
                     V'Nefesh emerged as a response to the community's yearning for a 
@@ -68,9 +65,13 @@
                     both comforting and inspiring. This vision has guided us from our 
                     inception and continues to illuminate our path forward.
                 </p>    
+                </div>
+            </div>
+            <div class="section-container" id="our-community">
                 <h4>
                     Our Community
                 </h4>
+                <div class="paragraph-container">
                 <p>   
                     Kehilas Lev V'Nefesh is proud to be a diverse community that welcomes 
                     individuals and families from all walks of life. We believe in the 
@@ -78,10 +79,14 @@
                     journey. While we may not highlight specific programs or activities 
                     at this time, our doors are always open to ideas, initiatives, and 
                     volunteers looking to contribute to the vibrant tapestry of our community.
-                </p>     
+                </p>
+            </div>
+        </div>
+        <div class="section-container" id="join-us">
                 <h4>   
                     Join Us
                 </h4>
+                <div class="paragraph-container">
                 <p> 
                     Whether you are seeking a place for prayer, looking for a 
                     community to celebrate life's milestones, or simply searching for a 
@@ -89,10 +94,32 @@
                     you to join us. Together, we will continue to build a shul where the 
                     heart and soul of every member are nurtured and celebrated.
                 </p>
+            </div>
+        </div>
+        <div class="section-container">
+            <section id="minyanTimes">
+                <h2>Minyanim</h2>
+                <div id="minyanTimesList">
+                    <!-- Minyan times will be dynamically inserted here -->
+                </div>
             </section>
-
-            <div class="contact-info">
-                <h2>Contact</h2>
+        </div>
+        <div class="section-container" id="announcements">
+            <h2>Announcements</h2>
+            <div id="announcementList">
+                <!-- Announcements will be dynamically inserted here -->
+            </div>
+        </div>
+        <div class="section-container">
+            <section>
+                <h2>Minyan Sheet</h2>
+                <div id="uploadedFileContainer">
+                    <!-- Uploaded file will be dynamically inserted here -->
+                </div>
+            </section>
+        </div>
+            <div class="section-container">
+                <h2>Contact Info</h2>
                 <p>
                     For more information, please contact us at:
                 </p>
@@ -101,12 +128,10 @@
                     <li>Phone: (973) 747-7186</li>
                 </ul>
             </div>
-        </div>
     </main>
     <footer>
-        <p>&copy; All rights reserved.</p>
+        <p>&copy; Kehilas Lev V'Nefesh 2024, All rights reserved.</p>
     </footer>
-
     <script src="../js/main.js"></script>
 </body>
 </html>

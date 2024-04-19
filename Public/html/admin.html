@@ -6,22 +6,21 @@
     <title>Admin Panel - Manage Minyan Times</title>
     <link rel="stylesheet" href="../Css/Styles.css">
 </head>
-<body>
+<body class="main-container">
     <header>
-        <h1>Admin Panel</h1>
         <div class="nav-container">
             <nav class="nav">
                 <ul class="nav-links">
                     <li><a href="index.html">Home</a></li>
                     <li><a href="minyan-times.html">Minyan Times</a></li>
                     <li><a href="donate.html">Donate/Sponsor</a></li>
-                    <li><a href="index.html#aboutUs">About Us</a></li>
                     <li><a href="contact.html">Contact Us</a></li>
                 </ul>
             </nav>
         </div>  
     </header>
     <main>
+        <h1>Admin Panel</h1>
         <section id="addMinyanTime">
             <h2>Add New Minyan Time</h2>
             <form id="minyanTimeForm">
@@ -33,6 +32,19 @@
                     <label for="minyanTime">Time:</label>
                     <input type="time" id="minyanTime" name="minyanTime" required>
                 </div>
+                <div>
+                    <label for="minyanDay">Day:</label>
+                    <select id="minyanDay" name="minyanDay" required>
+                        <option value="">Select a day</option>
+                        <option value="Sunday">Sunday</option>
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                    </select>
+                </div>
                 <button type="submit">Add Minyan Time</button>
             </form>
         </section>
@@ -42,17 +54,36 @@
             <div id="minyanTimesList"></div>
             <button id="clearMinyanTimes">Clear All Minyan Times</button>
         </section>
+        <div class="section-container" id="upload-announcement">
+            <h2>Upload Announcement</h2>
+            <form id="announcementForm">
+                <label for="announcementHeader">Title:</label>
+                <input type="text" id="announcementHeader" name="announcementHeader" required>
+                <label for="announcementText">Text:</label>
+                <textarea id="announcementText" name="announcementText" required></textarea>
+                <button type="submit">Upload Announcement</button>
+            </form>
+        </div>
         <section id="fileUpload">
             <h2>Upload File</h2>
-            <form id="fileUploadForm" action="/file/upload" method="post" enctype="multipart/form-data">
+            <form id="fileUploadForm" action="/api/files" method="post" enctype="multipart/form-data">
                 <div>
                     <label for="fileInput">Select a file:</label>
                     <input type="file" id="fileInput" name="fileInput" required>
                 </div>
-                <button type="submit">Upload File</button>
+                <button type="submit">Upload Sheet</button>
             </form>
         </section>
+        <section id="uploadedFile">
+            <h2>Uploaded File</h2>
+            <!-- Uploaded file will be dynamically inserted into this div -->
+            <div id="uploadedFileContainer"></div>
+            <button id="deleteUploadedFile">Delete Uploaded File</button>
+        </section>
     </main>
-    <script src="../Public/js/main.js"></script>
+    <script src="/js/main.js"></script>
 </body>
+<footer>
+    <p>&copy; Kehilas Lev V'Nefesh 2024, All rights reserved.</p>
+</footer>
 </html>

@@ -7,3 +7,4 @@ info.php
 .DS_Store
 wp-config.php
 jest.setup.js
+.env
