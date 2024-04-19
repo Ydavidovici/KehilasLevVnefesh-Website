@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Manage Minyan Times</title>
+    <link rel="stylesheet" href="../Css/Styles.css">
+</head>
+<body class="main-container">
+<header>
+    <div class="nav-container">
+        <nav class="nav">
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="minyan-times.html">Minyan Times</a></li>
+                <li><a href="donate.html">Donate/Sponsor</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<form action="/admin/login" method="post">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <button type="submit">Login</button>
+</form>
+<script src="../js/main.js"></script>
+</body>
