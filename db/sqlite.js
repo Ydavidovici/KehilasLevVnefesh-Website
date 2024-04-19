@@ -2,7 +2,8 @@ const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const path = require('path');
 const fs = require('fs');
-const dbPath = path.join(__dirname, 'minyanim.db');
+
+const dbPath = path.resolve(process.env.DB_PATH);
 
 
 let db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {

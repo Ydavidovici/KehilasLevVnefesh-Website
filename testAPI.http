@@ -1,0 +1,88 @@
+### Get All Minyan Times
+GET http://localhost:4000/api/minyan
+Accept: application/json
+
+### Add a New Minyan Time
+POST http://localhost:4000/api/minyan
+Content-Type: application/json
+{
+  "name": "Shacharit",
+  "time": "08:00",
+  "day": "Sunday"
+}
+
+### Update a Minyan Time
+PUT http://localhost:4000/api/minyan/1
+Content-Type: application/json
+{
+  "name": "Shacharit",
+  "time": "07:30",
+  "day": "Sunday"
+}
+
+### Delete a Minyan Time
+DELETE http://localhost:4000/api/minyan/1
+
+### Upload a File
+POST http://localhost:4000/api/upload
+Content-Type: multipart/form-data
+@/path/to/file.txt
+
+### Update File Metadata
+PUT http://localhost:4000/api/files/1
+Content-Type: application/json
+{
+  "originalName": "updated_file_name.txt"
+}
+
+### Get All Files
+GET http://localhost:4000/api/files
+
+### Delete a File
+DELETE http://localhost:4000/api/files/1
+
+### Create a New Announcement
+POST http://localhost:4000/api/announcement
+Content-Type: application/json
+{
+  "header": "Community Event",
+  "text": "Join us for a community gathering this weekend!"
+}
+
+### Get All Announcements
+GET http://localhost:4000/api/announcement
+
+### Update an Announcement
+PUT http://localhost:4000/api/announcement/1
+Content-Type: application/json
+{
+  "header": "Updated Community Event",
+  "text": "Updated details for the community gathering!"
+}
+
+### Delete an Announcement
+DELETE http://localhost:4000/api/announcement/1
+
+### Create a New Sponsor
+POST http://localhost:4000/api/sponsors
+Content-Type: application/json
+{
+  "name": "John Doe",
+  "sponsored_for": "Parnes Hashavua",
+  "details": "Sponsoring for Parshat Noach"
+}
+
+### Get All Sponsors
+GET http://localhost:4000/api/sponsors
+
+### Update a Sponsor
+PUT http://localhost:4000/api/sponsors/1
+Content-Type: application/json
+{
+  "name": "Jane Doe",
+  "sponsored_for": "Parnes Hachodesh",
+  "details": "Sponsoring for the month of Tishrei"
+}
+
+### Delete a Sponsor
+DELETE http://localhost:4000/api/sponsors/1

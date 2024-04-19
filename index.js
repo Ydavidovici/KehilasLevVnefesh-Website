@@ -3,12 +3,13 @@ const session = require('express-session');
 const path = require('path');
 const fs = require('fs');
 const cors = require('cors');
-require('dotenv').config(); 
+require('dotenv').config();
 const { db, initializeTables,seedAdmins } = require('./db/sqlite');
 const app = express();
 const port = process.env.PORT || 4000;
 const router = express.Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const setupAdminRoutes = require('./routes/admin');  // Make sure the path is correct
 
 // Use environment variables for sensitive information
 app.use(session({
@@ -37,9 +38,7 @@ app.get('/', (_req, res) => {
     });
 });
 
-const adminRoutes = require('./routes/admin');
-app.use('/api' , adminRoutes);
-
+setupAdminRoutes(app)
 
 
 const server = app.listen(port, () => {
