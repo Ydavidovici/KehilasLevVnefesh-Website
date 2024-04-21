@@ -308,29 +308,19 @@ app.post('/admin/login', async (req, res) => {
     const { username, password } = req.body;
     try {
         const [results] = await pool.query('SELECT password FROM admins WHERE username = ?', [username]);
-        if (results.length > 0) {
-            const match = await bcrypt.compare(password, results[0].password);
-            if (match) {
-                req.session.isAdmin = true; // Set a flag in the session
-                res.redirect('/admin'); // Assuming this is a valid route that sends a success response or a dashboard
-            } else {
-                res.status(401).send('Invalid credentials');
-            }
+        if (results.length > 0 && await bcrypt.compare(password, results[0].password)) {
+            req.session.isAdmin = true;
+            res.redirect('/admin'); // Redirect to the admin panel after successful login
         } else {
-            res.status(401).send('Invalid credentials');
+            req.session.isAdmin = false;
+            res.status(401).send('Invalid credentials'); // Optionally redirect to login page again or show an error
         }
     } catch (error) {
+        console.error("Login error:", error);
         res.status(500).send('Server error');
     }
 });
 
-function checkAdmin(req, res, next) {
-    if (req.session.isAdmin) {
-        next();  // proceed to the next middleware or route handler
-    } else {
-        res.status(403).send('Access Denied');
-    }
-}
 
 app.get('/api/admin/users', async (req, res) => {
     console.log("Querying database for admin users...");
@@ -341,32 +331,37 @@ app.get('/api/admin/users', async (req, res) => {
         res.json(results);
     } catch (err) {
         console.error("Failed to retrieve admin users:", err);
-        res.status(500).send({ error: 'Internal server error', detail: err.message });
+        res.status(500).send({error: 'Internal server error', detail: err.message});
     }
 });
-
-
-
-app.get('/api/auth/check', (req, res) => {
-    if (req.session.isAdmin) {
-        res.status(200).json({ isAuthenticated: true });
+function checkAdmin(req, res, next) {
+    if (req.session && req.session.isAdmin) {
+        next();
     } else {
-        res.status(200).json({ isAuthenticated: false });
+        res.redirect('/admin');
     }
-});
-
-app.use(express.static(path.join(__dirname, 'public', 'html')));
-
-app.get('/admin', checkAdmin, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'html', 'admin.html'));
-});
-
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'Public', 'html', 'index.html'));
-});
+}
 
 
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
-    console.log('MySQL connection established');
-});
+
+        app.get('/api/auth/check', (req, res) => {
+            if (req.session.isAdmin) {
+                res.status(200).json({isAuthenticated: true});
+            } else {
+                res.status(200).json({isAuthenticated: false});
+            }
+        });
+
+        app.use(express.static(path.join(__dirname, 'public', 'html')));
+
+        app.get('/admin', checkAdmin, (req, res) => {
+            res.sendFile(path.join(__dirname, 'public', 'html', 'admin.html'));
+        });
+
+        app.get('*', (req, res) => {
+            res.sendFile(path.join(__dirname, 'Public', 'html', 'index.html'));
+        });
+        app.listen(port, () => {
+            console.log(`Server running on http://localhost:${port}`);
+            console.log('MySQL connection established');
+        });
