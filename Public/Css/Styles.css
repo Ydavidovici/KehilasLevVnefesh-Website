@@ -181,3 +181,75 @@ input[type="submit"]:hover {
     background-color: #0056b3;  /* Darken button on hover */
     text-decoration: none;  /* Ensure no underline on hover */
 }
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333; /* Dark grey for better readability */
+    font-weight: bold; /* Make labels bold */
+}
+
+/* Input and Select Box Styling */
+input[type="text"],
+input[type="time"],
+input[type="file"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc; /* Light grey border */
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #fff; /* White background for input fields */
+    transition: border-color 0.3s ease-in-out;
+}
+
+input[type="text"]:focus,
+input[type="time"]:focus,
+input[type="file"]:focus,
+select:focus,
+textarea:focus {
+    border-color: #333; /* Dark grey border on focus */
+}
+
+/* Button Styling */
+button {
+    background-color: #333; /* Dark grey for primary buttons */
+    color: white;
+    padding: 10px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #555; /* Lighter grey on hover */
+}
+
+/* Additional Styles for Form Consistency */
+form div {
+    margin-bottom: 15px; /* Space out elements */
+}
+
+/* Responsive Design Adjustments */
+@media (max-width: 768px) {
+    .section-container,
+    .nav-container {
+        padding: 10px;
+    }
+
+    input[type="submit"],
+    button {
+        width: 100%; /* Full width buttons on smaller screens */
+    }
+}
+
+/* Enhancements for Readability and Accessibility */
+h2 {
+    color: #000; /* Black for headings */
+    padding-bottom: 10px; /* Space below headings */
+}

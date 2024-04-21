@@ -11,20 +11,23 @@
     "test": "jest"
   },
   "dependencies": {
-    "bcrypt": "^5.0.0",
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "fs": "0.0.1-security",
     "https": "^1.0.0",
-    "multer": "^1.4.4-lts.1",
+    "multer": "^1.4.5-lts.1",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.9.6",
     "nodemailer": "^6.9.13",
-    "sqlite3": "^5.1.7",
     "stripe": "^8.130.0"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.12",
     "jest": "^24.9.0",
     "jest-environment-jsdom": "^24.9.0",
     "jest-fetch-mock": "^3.0.3",
