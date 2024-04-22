@@ -31,7 +31,7 @@ body {
     border-radius: 25px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     position: relative;
-    top: 0px;
+    top: 0;
     z-index: 1000;
 }
 
@@ -253,3 +253,15 @@ h2 {
     color: #000; /* Black for headings */
     padding-bottom: 10px; /* Space below headings */
 }
+
+.announcement-container {
+    margin-top: 20px;
+}
+
+.announcement-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+}
+

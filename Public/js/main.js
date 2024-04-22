@@ -1,147 +1,473 @@
-// Entry point when the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
-    refreshUI();
-    fetchConfig();
+    fetchDataAndRenderAllUI();
 });
 
+
+document.getElementById('clearMinyanTimes').addEventListener('click', clearAllMinyanTimes);
+document.getElementById('deleteUploadedFile').addEventListener('click', deleteUploadedFiles);
+
+
 function setupEventListeners() {
-    // Forms
-    setupFormSubmission('announcementForm', addAnnouncement);
-    setupFormSubmission('minyanTimeForm', addMinyanTime);
-    setupFormSubmission('fileUploadForm', handleFileUpload, true); // Handle file upload with FormData
-    setupFormSubmission('loginForm', performLogin);
+    // Form submissions
+    document.getElementById('minyanTimeForm').addEventListener('submit', handleMinyanTimeSubmission);
+    document.getElementById('announcementForm').addEventListener('submit', handleAnnouncementSubmission);
+    document.getElementById('fileUploadForm').addEventListener('submit', handleFileUpload);
+    document.getElementById('clearMinyanTimes').addEventListener('click', clearAllMinyanTimes);
 
-    // Buttons
-    setupButtonClick('clearMinyanTimes', clearAllMinyanTimes);
+    // Additional button in Uploaded Files Section
+    document.getElementById('deleteUploadedFile').addEventListener('click', deleteUploadedFiles); // Assuming it's a bulk delete; adjust if it's individual
 }
 
-function setupFormSubmission(formId, callback, isFormData = false) {
-    const form = document.getElementById(formId);
-    if (form) {
-        form.addEventListener('submit', event => {
-            event.preventDefault();
-            const formData = isFormData ? new FormData(form) : null;
-            formData ? callback(formData) : callback();
-        });
-    }
+function fetchDataAndRenderAllUI() {
+    fetchMinyanTimes();
+    fetchAnnouncements();
+    fetchUploadedFiles();
+    fetchSponsors();
+    fetchSponsorships();
 }
 
-function setupButtonClick(buttonId, callback) {
-    const button = document.getElementById(buttonId);
-    if (button) {
-        button.addEventListener('click', callback);
-    }
+function fetchMinyanTimes() {
+    const url = '/api/minyan';
+    fetch(url, {
+        method: 'GET',
+        headers: {'Accept': 'application/json'}
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`Failed to fetch minyan times: ${response.statusText}`);
+        }
+        return response.json();
+    }).then(data => {
+        updateMinyanTimesUI(data);
+    }).catch(error => {
+        console.error('Error fetching minyan times:', error);
+        // Update the UI to show an error message or empty state
+        updateMinyanTimesUI([]);
+    });
 }
 
-function addMinyanTime() {
+
+function fetchAnnouncements() {
+    const url = '/api/announcement';
+    fetch(url, {
+        method: 'GET',
+        headers: {'Accept': 'application/json'}
+    }).then(response => {
+        if (!response.ok) throw new Error('Failed to load announcements');
+        return response.json();
+    }).then(data => {
+        updateAnnouncementsUI(data);
+    }).catch(error => {
+        console.error('Error fetching announcements:', error);
+        updateAnnouncementsUI([]);
+    });
+}
+
+
+function fetchUploadedFiles() {
+    const url = '/api/files';
+    fetch(url, {
+        method: 'GET',
+        headers: {'Accept': 'application/json'}
+    }).then(response => {
+        if (!response.ok) throw new Error('Failed to load files');
+        return response.json();
+    }).then(data => {
+        updateUploadedFilesUI(data);
+    }).catch(error => {
+        console.error('Error fetching files:', error);
+        updateUploadedFilesUI([]);
+    });
+}
+
+
+function fetchSponsors() {
+    const url = '/api/sponsors';
+    fetch(url, {
+        method: 'GET',
+        headers: {'Accept': 'application/json'}
+    }).then(response => {
+        if (!response.ok) throw new Error('Failed to load sponsors');
+        return response.json();
+    }).then(data => {
+        updateSponsorsUI(data);
+    }).catch(error => {
+        console.error('Error fetching sponsors:', error);
+        updateSponsorsUI([]);
+    });
+}
+
+function fetchSponsorships() {
+    const url = '/api/sponsorships';
+    fetch(url, {
+        method: 'GET',
+        headers: {'Accept': 'application/json'}
+    }).then(response => {
+        if (!response.ok) throw new Error('Failed to load sponsorships');
+        return response.json();
+    }).then(data => {
+        updateSponsorshipsUI(data);
+    }).catch(error => {
+        console.error('Error fetching sponsorships:', error);
+        updateSponsorshipsUI([]);
+    });
+}
+
+
+function handleMinyanTimeSubmission(event) {
+    event.preventDefault();
+    const url = '/api/minyan';
     const data = {
         name: document.getElementById('minyanName').value,
         time: document.getElementById('minyanTime').value,
         day: document.getElementById('minyanDay').value
     };
-    fetchData('/api/minyan', 'POST', data, refreshUI);
+
+    fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    }).then(response => {
+        if (!response.ok) throw new Error(`Failed to post minyan time: ${response.statusText}`);
+        return response.json();
+    }).then(() => {
+        fetchMinyanTimes();
+    }).catch(error => {
+        console.error('Error submitting minyan time:', error);
+    });
+}
+
+
+function handleAnnouncementSubmission(event) {
+    event.preventDefault();
+    const url = '/api/announcement';
+    const data = {
+        header: document.getElementById('announcementHeader').value,
+        text: document.getElementById('announcementText').value
+    };
+
+    fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to post announcement');
+            return response.json();
+        })
+        .then(() => fetchAnnouncements())
+        .catch(error => console.error('Error submitting announcement:', error));
+}
+
+
+function handleFileUpload(event) {
+    event.preventDefault();
+    const url = '/api/files';
+    const formData = new FormData(document.getElementById('fileUploadForm'));
+
+    fetch(url, {
+        method: 'POST',
+        body: formData
+    }).then(response => {
+        if (!response.ok) throw new Error('Failed to upload file');
+        fetchUploadedFiles();
+    }).catch(error => {
+        console.error('Error with file upload:', error);
+    });
 }
 
 function clearAllMinyanTimes() {
-    fetchData('/api/minyan/clear', 'DELETE', {}, refreshUI);
+    const url = '/api/minyan/clear';
+    fetch(url, {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json'}
+    }).then(response => {
+        if (!response.ok) throw new Error('Failed to clear minyan times');
+        fetchMinyanTimes(); // Refresh the list after clearing
+        alert('All minyan times cleared successfully.');
+    }).catch(error => {
+        console.error('Error clearing minyan times:', error);
+        alert('Failed to clear minyan times. Please try again later.');
+    });
 }
 
-function handleFileUpload(formData) {
-    fetch('/api/files', {
-        method: 'POST',
-        body: formData
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log('File upload successful:', data);
-            refreshUI();
-        })
-        .catch(error => console.error('Error with file upload:', error));
+
+
+function deleteMinyanTime(minyanId) {
+    const url = `/api/minyan/${minyanId}`;
+    fetch(url, {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json'}
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error(`Failed to delete minyan time: ${response.statusText}`);
+        }
+        fetchMinyanTimes(); // Refresh the list after deleting
+    }).catch(error => {
+        console.error('Error deleting minyan time:', error);
+    });
 }
 
-function performLogin() {
+function performLogin(event) {
+    event.preventDefault();
+    const url = '/admin/login';
     const data = {
         username: document.getElementById('username').value,
         password: document.getElementById('password').value
     };
-    fetchData('/admin/login', 'POST', data, handleLoginResponse);
-}
 
-function handleLoginResponse(response) {
-    if (response.ok) {
-        window.location.href = '/admin';
-    } else {
-        alert('Login failed! Please check your credentials and try again.');
-    }
-}
-
-function fetchData(url, method, body, callback) {
-    const options = {
-        method: method,
-        headers: { 'Content-Type': 'application/json' },
-        body: method !== 'GET' ? JSON.stringify(body) : null
-    };
-    fetch(url, options)
-        .then(response => {
-            if (!response.ok) throw new Error(`${response.statusText} (${response.status})`);
-            return response.json();
-        })
-        .then(data => callback(data))
-        .catch(error => console.error(`Error with ${method} at ${url}:`, error));
-}
-
-function refreshUI() {
-    fetchMinyanTimes();
-    fetchAnnouncements();
-    fetchUploadedFiles();
-    fetchSponsors();
-}
-
-function fetchMinyanTimes() {
-    fetchData('/api/minyan', 'GET', {}, updateMinyanTimesUI);
-}
-
-function fetchAnnouncements() {
-    fetchData('/api/announcement', 'GET', {}, updateAnnouncementsUI);
-}
-
-function fetchUploadedFiles() {
-    fetchData('/api/files', 'GET', {}, updateUploadedFilesUI);
-}
-
-function fetchSponsors() {
-    fetchData('/api/sponsors', 'GET', {}, updateSponsorsUI);
-}
-
-function updateMinyanTimesUI(minyanTimes) {
-    updateUIList('minyanTimesList', minyanTimes, minyan => `${minyan.name} at ${minyan.time} on ${minyan.day}`);
-}
-
-function updateAnnouncementsUI(announcements) {
-    updateUIList('announcementsList', announcements, announcement => `${announcement.header}: ${announcement.text}`);
-}
-
-function updateUploadedFilesUI(files) {
-    updateUIList('uploadedFilesList', files, file => `${file.originalName} (${file.mimeType}) - ${file.size} bytes`);
-}
-
-function updateSponsorsUI(sponsors) {
-    updateUIList('sponsorsList', sponsors, sponsor => `${sponsor.name} (${sponsor.contactInfo})`);
+    fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data),
+        credentials: 'same-origin'
+    }).then(response => {
+        if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+        return response.json();
+    }).then(response => {
+        if (response.success) {
+            window.location.href = '/admin';
+        } else {
+            alert(response.message || 'Login failed! Please check your credentials and try again.');
+        }
+    }).catch(error => {
+        console.error('Login failed:', error);
+        alert('Login failed! Please try again.');
+    });
 }
 
 function updateUIList(containerId, items, formatter) {
     const container = document.getElementById(containerId);
-    container.innerHTML = '';
-    items.forEach(item => {
-        const div = document.createElement('div');
-        div.textContent = formatter(item);
-        container.appendChild(div);
+    container.innerHTML = items.map(item => `<div>${formatter(item)}</div>`).join('');
+}
+
+function updateMinyanTimesUI(minyanTimes) {
+    const container = document.getElementById('minyanTimesList');
+    if (!container) {
+        console.error('Minyan times list container not found');
+        return;
+    }
+    const htmlContent = minyanTimes.map(minyan => `
+        <div class="minyan-item">
+            ${minyan.day} - ${minyan.name} at ${minyan.time}
+            <button onclick="deleteMinyanTime(${minyan.id})">Delete</button>
+        </div>
+    `).join('');
+    container.innerHTML = htmlContent;
+}
+
+
+
+function updateAnnouncementsUI(data) {
+    updateUIList('announcementList', data, item => `<strong>${item.header}</strong>: ${item.text}`);
+}
+
+function updateUploadedFilesUI(data) {
+    updateUIList('uploadedFileContainer', data, file => `${file.original_name} (Uploaded on ${file.upload_date}) <button onclick="deleteUploadedFile(${file.id})">Delete</button>`);
+}
+
+function updateSponsorsUI(data) {
+    updateUIList('sponsorsList', data, sponsor => `${sponsor.name} (${sponsor.contact_info})`);
+}
+
+function updateSponsorshipsUI(data) {
+    updateUIList('sponsorshipsList', data, sp => `${sp.sponsor_id}: ${sp.detail_id} for $${sp.amount} on ${sp.date}`);
+}
+
+function deleteUploadedFiles() {
+    // Assuming bulk delete; adjust if necessary for individual delete
+    const url = '/api/files/delete_all';
+    fetch(url, {
+        method: 'DELETE',
+        headers: {'Content-Type': 'application/json'}
+    }).then(response => {
+        if (!response.ok) throw new Error('Failed to delete files');
+        fetchUploadedFiles(); // Refresh the files list
+    }).catch(error => {
+        console.error('Error deleting files:', error);
     });
 }
 
-function fetchConfig() {
-    fetchData('/api/config', 'GET', {}, (config) => {
-        console.log('Config loaded:', config);
+function fetchAnnouncements() {
+    const url = '/api/announcement';
+    fetch(url, {
+        method: 'GET',
+        headers: {'Accept': 'application/json'}
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to load announcements');
+        }
+        return response.json();
+    }).then(data => {
+        updateAnnouncementsUI(data);
+    }).catch(error => {
+        console.error('Error fetching announcements:', error);
+        updateAnnouncementsUI([]); // Handle the case where no data is fetched
     });
 }
+
+function updateAnnouncementsUI(announcements) {
+    const container = document.getElementById('announcementList');
+    if (!container) {
+        console.error('Announcement list container not found');
+        return;
+    }
+    if (announcements.length === 0) {
+        container.innerHTML = "<p>No announcements available.</p>";
+        return;
+    }
+    const htmlContent = announcements.map(announcement => `
+        <div class="announcement-item">
+            <strong>${announcement.header}</strong>
+            <p>${announcement.text}</p>
+            <button onclick="deleteAnnouncement(${announcement.id})">Delete</button>
+        </div>
+    `).join('');
+    container.innerHTML = htmlContent;
+}
+
+function deleteAnnouncement(announcementId) {
+    const url = `/api/announcement/${announcementId}`;
+    fetch(url, {
+        method: 'DELETE'
+    }).then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to delete announcement');
+        }
+        fetchAnnouncements(); // Refresh the list after deleting
+    }).catch(error => {
+        console.error('Error deleting announcement:', error);
+    });
+}
+
+
+document.getElementById('sponsorForm').addEventListener('submit', handleSponsorSubmission);
+
+function handleSponsorSubmission(event) {
+    event.preventDefault();
+    const sponsorData = {
+        name: document.getElementById('sponsorName').value,
+        details: document.getElementById('sponsorDetails').value
+    };
+    fetch('/api/sponsors', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sponsorData)
+    }).then(response => response.json())
+        .then(() => {
+            fetchSponsors(); // Refresh the list
+        })
+        .catch(error => console.error('Error adding sponsor:', error));
+}
+
+function fetchSponsors() {
+    fetch('/api/sponsors')
+        .then(response => response.json())
+        .then(data => updateSponsorsUI(data))
+        .catch(error => console.error('Error fetching sponsors:', error));
+}
+
+function updateSponsorsUI(sponsors) {
+    const sponsorsList = document.getElementById('sponsorsList');
+    sponsorsList.innerHTML = sponsors.map(sponsor =>
+        `<div>${sponsor.name} - ${sponsor.details} <button onclick="deleteSponsor(${sponsor.id})">Delete</button></div>`
+    ).join('');
+}
+
+function deleteSponsor(sponsorId) {
+    fetch(`/api/sponsors/${sponsorId}`, { method: 'DELETE' })
+        .then(() => fetchSponsors())
+        .catch(error => console.error('Error deleting sponsor:', error));
+}
+
+
+document.getElementById('sponsorshipForm').addEventListener('submit', handleSponsorshipSubmission);
+
+function handleSponsorshipSubmission(event) {
+    event.preventDefault();
+    const sponsorshipData = {
+        sponsorId: document.getElementById('sponsorId').value,
+        detail: document.getElementById('detail').value,
+        date: document.getElementById('sponsorshipDate').value,
+        amount: document.getElementById('amount').value
+    };
+    fetch('/api/sponsorships', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sponsorshipData)
+    }).then(response => response.json())
+        .then(() => {
+            fetchSponsorships(); // Refresh the list
+        })
+        .catch(error => console.error('Error adding sponsorship:', error));
+}
+
+function fetchSponsorships() {
+    fetch('/api/sponsorships')
+        .then(response => response.json())
+        .then(data => updateSponsorshipsUI(data))
+        .catch(error => console.error('Error fetching sponsorships:', error));
+}
+
+function updateSponsorshipsUI(sponsorships) {
+    const sponsorshipsList = document.getElementById('sponsorshipsList');
+    sponsorshipsList.innerHTML = sponsorships.map(sp =>
+        `<div>Sponsor ID: ${sp.sponsor_id}, Details: ${sp.detail}, Amount: ${sp.amount} on ${sp.date} 
+         <button onclick="deleteSponsorship(${sp.id})">Delete</button></div>`
+    ).join('');
+}
+
+function deleteSponsorship(sponsorshipId) {
+    fetch(`/api/sponsorships/${sponsorshipId}`, { method: 'DELETE' })
+        .then(() => fetchSponsorships())
+        .catch(error => console.error('Error deleting sponsorship:', error));
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    fetchSponsors();
+    fetchSponsorships();
+    document.getElementById('addSponsorForm').addEventListener('submit', addSponsor);
+    document.getElementById('addSponsorshipForm').addEventListener('submit', addSponsorship);
+});
+
+function fetchSponsors() {
+    fetch('/api/sponsors')
+        .then(response => response.json())
+        .then(data => updateSponsorsUI(data))
+        .catch(error => console.error('Error fetching sponsors:', error));
+}
+
+function updateSponsorsUI(sponsors) {
+    const container = document.getElementById('sponsorsList');
+    if (container) {
+        container.innerHTML = sponsors.map(sponsor =>
+            `<div>${sponsor.name} - Contact Info: ${sponsor.contact_info}</div>`
+        ).join('');
+    }
+}
+
+function fetchSponsorships() {
+    fetch('/api/sponsorships')
+        .then(response => response.json())
+        .then(data => updateSponsorshipsUI(data))
+        .catch(error => console.error('Error fetching sponsorships:', error));
+}
+
+function updateSponsorshipsUI(sponsorships) {
+    const container = document.getElementById('sponsorshipsList');
+    if (container) {
+        container.innerHTML = sponsorships.map(sp =>
+            `<div>${sp.sponsorName} (${sp.detailName}): $${sp.amount} on ${sp.date}</div>`
+        ).join('');
+    }
+}
+
+
+
+
+
+
+
+
+

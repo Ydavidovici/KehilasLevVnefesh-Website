@@ -8,21 +8,33 @@ const mysql = require('mysql2/promise');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
 
-
 const app = express();
-const port = process.env.PORT || 4000;
+const port = 4000;
 
-// Express Middleware
 app.use(express.json());
 app.use(cors());
+
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'fallback_secret',
-    saveUninitialized: true,
-    resave: false,
-    cookie: { secure: process.env.NODE_ENV === 'production', httpOnly: true }
+    secret: 'your_secret_key',  // Secret key to sign the session ID cookie
+    resave: false,              // Forces the session to be saved back to the session store
+    saveUninitialized: true,    // Forces a session that is "uninitialized" to be saved to the store
+    cookie: {
+        secure: false,          // Set to true if you have HTTPS enabled
+        httpOnly: true,         // Minimizes risk of XSS attacks
+        maxAge: 1000 * 60 * 60  // Cookie expires after 1 hour
+    }
 }));
 
-// Database connection setup
+async function query(sql, params) {
+    try {
+        const [results, ] = await pool.query(sql, params);
+        return results;
+    } catch (error) {
+        console.error('Query error:', error);
+        throw error;  // Rethrowing the error to handle it in the calling function
+    }
+}
+
 const pool = mysql.createPool({
     host: process.env.DB_HOST_DEV,
     user: process.env.DB_USER_DEV,
@@ -38,24 +50,25 @@ pool.on('error', err => {
     process.exit(1);
 });
 
-// Helper function for database queries
-function query(sql, params) {
-    return new Promise((resolve, reject) => {
-        pool.query(sql, params, (error, results) => {
-            if (error) return reject(error);
-            resolve(results);
-        });
-    });
-}
+app.use((req, res, next) => {
+    console.log('Request received');
+    if (req.someConditionFails) {
+        res.status(401).send('Unauthorized'); // This would stop the request prematurely
+    } else {
+        next(); // Ensure next() is called correctly
+    }
+});
+
 
 app.post('/api/minyan', async (req, res) => {
     const { name, time, day } = req.body;
     const sql = `INSERT INTO minyan_times (name, time, day) VALUES (?, ?, ?)`;
     try {
         const result = await query(sql, [name, time, day]);
-        res.status(201).send({ id: result.insertId });
+        res.status(201).send({ id: result.insertId, message: 'Minyan time added successfully' });
     } catch (err) {
-        res.status(500).send({ error: 'Internal server error' });
+        console.error("Database error during insert:", err);
+        res.status(500).send({ error: 'Internal server error', detail: err.message });
     }
 });
 
@@ -92,82 +105,79 @@ app.delete('/api/minyan/:id', async (req, res) => {
     }
 });
 
-const storage = multer.memoryStorage();  // Use memory storage to handle file data in buffer
+// Multer setup for file uploads
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/') // make sure this folder exists
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname)) // Appending extension
+    }
+});
 const upload = multer({ storage: storage });
 
-app.post('/api/files', upload.single('fileInput'), async (req, res) => {
+// POST route for file upload
+app.post('/api/upload', upload.single('fileInput'), async (req, res) => {
     if (!req.file) {
         return res.status(400).send({ error: 'No file uploaded.' });
     }
-    const originalName = req.file.originalname;
-    const fileData = req.file.buffer;  // Ensure file data is captured in buffer
 
-    if (!fileData) {
-        return res.status(400).send({ error: 'File data is missing.' });
-    }
+    const { originalname, filename, path: filePath, size } = req.file;
 
-    const sql = `INSERT INTO file_uploads (original_name, file_data) VALUES (?, ?)`;
+    const sql = `INSERT INTO file_uploads (original_name, file_path, file_size) VALUES (?, ?, ?)`;
     try {
-        const result = await query(sql, [originalName, fileData]);
-        res.status(201).send({ id: result.insertId, message: 'File uploaded successfully' });
-    } catch (err) {
-        console.error("Error during database operation:", err);
-        res.status(500).send({ error: 'Internal server error', detail: err.message });
+        await pool.query(sql, [originalname, filePath, size]);
+        res.status(201).send({ message: 'File uploaded successfully' });
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        res.status(500).send({ error: 'Internal server error', detail: error.message });
+    }
+});
+
+app.get('/api/files', async (req, res) => {
+    const sql = 'SELECT id, original_name, file_path, file_size, upload_date FROM file_uploads';
+    try {
+        const [results, ] = await pool.query(sql);
+        if (results.length > 0) {
+            res.json(results);
+        } else {
+            res.status(404).send({ message: 'No files found' });
+        }
+    } catch (error) {
+        console.error('Failed to retrieve files:', error);
+        res.status(500).send({ error: 'Internal server error', detail: error.message });
     }
 });
 
 app.get('/api/files/:id', async (req, res) => {
-    const { id } = req.params;
-    const sql = `SELECT original_name, file_data FROM file_uploads WHERE id = ?`;
+    const sql = 'SELECT * FROM file_uploads WHERE id = ?';
     try {
-        const [row] = await query(sql, [id]);
-        if (row) {
-            res.setHeader('Content-Type', 'application/pdf'); // Set appropriate content type if known
-            res.send(row.file_data);
+        const [results, ] = await pool.query(sql, [req.params.id]);
+        if (results.length > 0) {
+            res.json(results[0]);
         } else {
-            res.status(404).send({ error: 'File not found' });
+            res.status(404).send({ message: 'File not found' });
         }
-    } catch (err) {
-        res.status(500).send({ error: 'Internal server error' });
+    } catch (error) {
+        console.error('Failed to retrieve file:', error);
+        res.status(500).send({ error: 'Internal server error', detail: error.message });
     }
 });
 
 
-app.delete('/api/files/:id', async (req, res) => {
-    const { id } = req.params;
-    const sql = `SELECT original_name FROM file_uploads WHERE id = ?`;
+app.get('/api/download/:id', async (req, res) => {
+    const sql = 'SELECT file_path, original_name FROM file_uploads WHERE id = ?';
     try {
-        const result = await query(sql, [id]);
-        if (result.length > 0) {
-            // If file is found in the database, proceed to delete it from DB and file system
-            const deleteSql = `DELETE FROM file_uploads WHERE id = ?`;
-            const deleteResult = await query(deleteSql, [id]);
-            const filePath = path.join(__dirname, 'uploads', result[0].original_name);
-            fs.unlink(filePath, err => {
-                if (err) {
-                    console.error("Failed to delete file from file system:", err);
-                    return res.status(500).send({ error: 'Failed to delete file from storage.' });
-                }
-                res.send({ message: 'File deleted successfully', changes: deleteResult.affectedRows });
-            });
+        const [results, ] = await pool.query(sql, [req.params.id]);
+        if (results.length > 0) {
+            const { file_path, original_name } = results[0];
+            res.download(file_path, original_name);
         } else {
-            // If no file is found in the database, check if it exists in the file system and remove it
-            const filePath = path.join(__dirname, 'uploads', 'your-default-filename-based-on-id-or-logic');
-            if (fs.existsSync(filePath)) {
-                fs.unlink(filePath, err => {
-                    if (err) {
-                        console.error("Failed to delete file from file system:", err);
-                        return res.status(500).send({ error: 'Failed to delete file from storage.' });
-                    }
-                    res.send({ message: 'File not found in DB, but deleted from storage.', changes: 0 });
-                });
-            } else {
-                res.status(404).send({ message: 'No file found with the specified ID in DB or storage', changes: 0 });
-            }
+            res.status(404).send({ message: 'File not found' });
         }
-    } catch (err) {
-        console.error("Database error:", err);
-        res.status(500).send({ error: 'Internal server error' });
+    } catch (error) {
+        console.error('Failed to download file:', error);
+        res.status(500).send({ error: 'Internal server error', detail: error.message });
     }
 });
 
@@ -268,7 +278,6 @@ app.get('/api/sponsorships', async (req, res) => {
     }
 });
 
-
 app.delete('/api/sponsorships/:id', async (req, res) => {
     const { id } = req.params;
     const sql = `DELETE FROM sponsorships WHERE sponsorship_id = ?`;
@@ -303,65 +312,131 @@ app.put('/api/sponsorships/:id', async (req, res) => {
     }
 });
 
-
 app.post('/admin/login', async (req, res) => {
     const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Username and password are required' });
+    }
+
     try {
-        const [results] = await pool.query('SELECT password FROM admins WHERE username = ?', [username]);
-        if (results.length > 0 && await bcrypt.compare(password, results[0].password)) {
-            req.session.isAdmin = true;
-            res.redirect('/admin'); // Redirect to the admin panel after successful login
+        const [rows] = await pool.execute('SELECT password FROM admins WHERE username = ?', [username]);
+        if (rows.length === 0) {
+            return res.status(401).json({ error: 'No such user found' });
+        }
+
+        const hashedPasswordFromDb = rows[0].password;
+        const passwordMatch = await bcrypt.compare(password, hashedPasswordFromDb);
+        if (passwordMatch) {
+            req.session.user = { username };
+            req.session.isAuthenticated = true;
+            res.json({ success: true, message: 'Login successful' });
         } else {
-            req.session.isAdmin = false;
-            res.status(401).send('Invalid credentials'); // Optionally redirect to login page again or show an error
+            res.status(401).json({ error: 'Invalid credentials' });
         }
     } catch (error) {
-        console.error("Login error:", error);
-        res.status(500).send('Server error');
+        console.error('Login error:', error);
+        res.status(500).json({ error: 'Server error' });
     }
 });
 
 
-app.get('/api/admin/users', async (req, res) => {
-    console.log("Querying database for admin users...");
-    const sql = `SELECT id, username FROM admins`; // Assuming these columns exist
-    try {
-        const results = await query(sql);
-        console.log("Query successful:", results);
-        res.json(results);
-    } catch (err) {
-        console.error("Failed to retrieve admin users:", err);
-        res.status(500).send({error: 'Internal server error', detail: err.message});
+app.get('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).send('Failed to logout');
+        }
+        res.redirect('/login');  // Redirect to login page after successful logout
+    });
+});
+
+app.get('/api/admin/users', checkAdmin, (req, res) => {
+    res.json([{ id: 1, username: 'admin' }]);
+});
+
+app.get('/api/auth/check', (req, res) => {
+    if (req.session.isAuthenticated) {
+        res.status(200).json({ isAuthenticated: true });
+    } else {
+        res.status(200).json({ isAuthenticated: false });
     }
 });
+
+app.use(express.static(path.join(__dirname, 'Public')));
+
 function checkAdmin(req, res, next) {
-    if (req.session && req.session.isAdmin) {
+    if (req.session.isAuthenticated) {
+        console.log('logging in')
         next();
     } else {
-        res.redirect('/admin');
+        res.redirect('/login');  // Redirect users to login page if not authenticated
     }
 }
 
+// Serve the login page
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Public', 'html', 'login.html'));
+});
+
+app.get('/minyan-times', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Public', 'html', 'minyan-times.html'));
+});
+
+app.get('/donate', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Public', 'html', 'Donate.html'));
+});
+
+app.get('/contact', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Public', 'html', 'contact.html'));
+});
+
+app.get('/failure', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Public', 'html', 'failure.html'));
+});
+
+app.get('/sucess', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Public', 'html', 'success.html'));
+});
+
+app.get('/admin', checkAdmin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'Public', 'html', 'admin.html'));
+});
+
+app.get('/minyan-times.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Public', 'html', 'minyan-times.html'));
+});
+
+app.get('/admin.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Public', 'html', 'admin.html'));
+});
+
+app.get('/donate.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Public', 'html', 'donate.html'));
+});
+
+app.get('/login.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Public', 'html', 'login.html'));
+});
+
+app.get('/success.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Public', 'html', 'sucess.html'));
+});
+
+app.get('/failure.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Public', 'html', 'failure.html'));
+});
+
+app.get('/contact.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Public', 'html', 'contact.html'));
+});
 
 
-        app.get('/api/auth/check', (req, res) => {
-            if (req.session.isAdmin) {
-                res.status(200).json({isAuthenticated: true});
-            } else {
-                res.status(200).json({isAuthenticated: false});
-            }
-        });
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Public', 'html', 'index.html'));
+});
 
-        app.use(express.static(path.join(__dirname, 'public', 'html')));
 
-        app.get('/admin', checkAdmin, (req, res) => {
-            res.sendFile(path.join(__dirname, 'public', 'html', 'admin.html'));
-        });
-
-        app.get('*', (req, res) => {
-            res.sendFile(path.join(__dirname, 'Public', 'html', 'index.html'));
-        });
-        app.listen(port, () => {
-            console.log(`Server running on http://localhost:${port}`);
-            console.log('MySQL connection established');
-        });
+app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+    console.log('MySQL connection established');
+});
