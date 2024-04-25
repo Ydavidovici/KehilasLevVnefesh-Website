@@ -2,21 +2,19 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     fetchDataAndRenderAllUI();
 });
-
-
-document.getElementById('clearMinyanTimes').addEventListener('click', clearAllMinyanTimes);
-document.getElementById('deleteUploadedFile').addEventListener('click', deleteUploadedFiles);
-
-
 function setupEventListeners() {
-    // Form submissions
+    // Forms submission
     document.getElementById('minyanTimeForm').addEventListener('submit', handleMinyanTimeSubmission);
     document.getElementById('announcementForm').addEventListener('submit', handleAnnouncementSubmission);
     document.getElementById('fileUploadForm').addEventListener('submit', handleFileUpload);
-    document.getElementById('clearMinyanTimes').addEventListener('click', clearAllMinyanTimes);
+    document.getElementById('addSponsorForm').addEventListener('submit', addSponsor);
+    document.getElementById('addSponsorshipForm').addEventListener('submit', addSponsorship);
+    document.getElementById('sponsorForm').addEventListener('submit', handleSponsorSubmission);
+    document.getElementById('sponsorshipForm').addEventListener('submit', handleSponsorshipSubmission);
 
-    // Additional button in Uploaded Files Section
-    document.getElementById('deleteUploadedFile').addEventListener('click', deleteUploadedFiles); // Assuming it's a bulk delete; adjust if it's individual
+    // Button clicks
+    document.getElementById('clearMinyanTimes').addEventListener('click', clearAllMinyanTimes);
+    document.getElementById('deleteUploadedFile').addEventListener('click', deleteUploadedFiles);
 }
 
 function fetchDataAndRenderAllUI() {
@@ -26,6 +24,7 @@ function fetchDataAndRenderAllUI() {
     fetchSponsors();
     fetchSponsorships();
 }
+
 
 function fetchMinyanTimes() {
     const url = '/api/minyan';
@@ -340,9 +339,6 @@ function deleteAnnouncement(announcementId) {
     });
 }
 
-
-document.getElementById('sponsorForm').addEventListener('submit', handleSponsorSubmission);
-
 function handleSponsorSubmission(event) {
     event.preventDefault();
     const sponsorData = {
@@ -381,7 +377,6 @@ function deleteSponsor(sponsorId) {
 }
 
 
-document.getElementById('sponsorshipForm').addEventListener('submit', handleSponsorshipSubmission);
 
 function handleSponsorshipSubmission(event) {
     event.preventDefault();
@@ -424,13 +419,6 @@ function deleteSponsorship(sponsorshipId) {
 }
 
 
-document.addEventListener('DOMContentLoaded', function() {
-    fetchSponsors();
-    fetchSponsorships();
-    document.getElementById('addSponsorForm').addEventListener('submit', addSponsor);
-    document.getElementById('addSponsorshipForm').addEventListener('submit', addSponsorship);
-});
-
 function fetchSponsors() {
     fetch('/api/sponsors')
         .then(response => response.json())
@@ -462,6 +450,8 @@ function updateSponsorshipsUI(sponsorships) {
         ).join('');
     }
 }
+
+
 
 
 
