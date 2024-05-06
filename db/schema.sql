@@ -15,9 +15,9 @@ date_posted TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS file_uploads (
-id INT AUTO_INCREMENT PRIMARY KEY,
 original_name VARCHAR(255) NOT NULL,
-file_data MEDIUMBLOB NOT NULL,
+file_data LONGBLOB NOT NULL,
+file_size BIGINT,
 upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -50,12 +50,6 @@ title VARCHAR(255) NOT NULL,
 description TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS admins (
-id INT AUTO_INCREMENT PRIMARY KEY,
-username VARCHAR(255) NOT NULL UNIQUE,
-password VARCHAR(255) NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS parnes_sponsorships (
 id INT AUTO_INCREMENT PRIMARY KEY,
 type ENUM('monthly', 'weekly') NOT NULL,  -- 'monthly' for Parnes HaChodesh, 'weekly' for Parnes HaShavuah
@@ -78,6 +72,12 @@ comments TEXT,
 FOREIGN KEY (sponsor_id) REFERENCES sponsors(id),
 FOREIGN KEY (sponsorship_id)
     REFERENCES parnes_sponsorships(id) -- Assuming no conflicts in IDs between tables; otherwise, adjust the design.
+);
+
+CREATE TABLE IF NOT EXISTS admins (
+id INT AUTO_INCREMENT PRIMARY KEY,
+username VARCHAR(255) NOT NULL UNIQUE,
+password VARCHAR(255) NOT NULL
 );
 
 INSERT INTO kiddush_sponsorships (title, description) VALUES

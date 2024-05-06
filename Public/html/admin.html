@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Manage Minyan Times</title>
+    <title>Admin Panel</title>
     <link rel="stylesheet" href="../Css/Styles.css">
 </head>
 <body class="main-container">
@@ -19,23 +19,22 @@
         </nav>
     </div>
 </header>
-<main>
+<main class="main-container">
     <h1>Admin Panel</h1>
-    <!-- Add Minyan Time Section -->
     <section id="addMinyanTime" class="section-container">
         <h2>Add New Minyan Time</h2>
         <form id="minyanTimeForm">
             <div>
                 <label for="minyanName">Minyan Name:</label>
-                <input type="text" id="minyanName" name="minyanName" required>
+                <input type="text" id="minyanName" name="name" required>
             </div>
             <div>
                 <label for="minyanTime">Time:</label>
-                <input type="time" id="minyanTime" name="minyanTime" required>
+                <input type="time" id="minyanTime" name="time" required>
             </div>
             <div>
-                <label for="minyanDay">Day:</label>
-                <select id="minyanDay" name="minyanDay" required>
+                <label for="minyanDay">Choose A Day:</label>
+                <select id="minyanDay" name="day" required>
                     <option value="">Select a day</option>
                     <option value="Sunday">Sunday</option>
                     <option value="Monday">Monday</option>
@@ -43,77 +42,56 @@
                     <option value="Wednesday">Wednesday</option>
                     <option value="Thursday">Thursday</option>
                     <option value="Friday">Friday</option>
-                    <option value="Saturday">Saturday</option>
+                    <option value="Saturday">Shabbos</option>
                 </select>
             </div>
             <button type="submit">Add Minyan Time</button>
         </form>
     </section>
-    <!-- Current Minyan Times Display Section -->
     <section id="currentMinyanTimes" class="section-container">
         <h2>Current Minyan Times</h2>
         <div id="minyanTimesList"></div>
-        <button id="clearMinyanTimes">Clear All Minyan Times</button>
+        <button id="clearMinyanTimes" onclick="clearMinyanTimes()">Clear All Minyan Times</button>
     </section>
-    <!-- Upload Announcement Section -->
     <section id="upload-announcement" class="section-container">
         <h2>Upload Announcement</h2>
         <form id="announcementForm">
-            <label for="announcementHeader">Title:</label>
-            <input type="text" id="announcementHeader" name="announcementHeader" required>
-            <label for="announcementText">Text:</label>
-            <textarea id="announcementText" name="announcementText" required></textarea>
-            <button type="submit">Upload Announcement</button>
-        </form>
-        <!-- Container to display announcements -->
-        <div id="announcementList" class="announcement-container"></div>
-    </section>
-    <section id="fileUpload" class="section-container">
-        <h2>Upload File</h2>
-        <form id="fileUploadForm" action="/api/files" method="post" enctype="multipart/form-data">
             <div>
-                <label for="fileInput">Select a file:</label>
-                <input type="file" id="fileInput" name="fileInput" required>
+                <label for="announcementHeader">Title:</label>
+                <input type="text" id="announcementHeader" name="header" required>
             </div>
-            <button type="submit">Upload File</button>
+            <div>
+                <label for="announcementText">Text:</label>
+                <textarea id="announcementText" name="text" required></textarea>
+            </div>
+            <button type="submit">Submit Announcement</button>
         </form>
+        <div id="announcementList" class="announcement-container"></div>
+        <button id="clearAllAnnouncements" onclick="clearAllAnnouncements()">Clear All Announcements</button>
     </section>
-    <section id="uploadedFile" class="section-container">
-        <h2>Uploaded Files</h2>
-        <div id="uploadedFileContainer"></div>
-        <button id="deleteUploadedFile">Delete Uploaded File</button>
-    </section>
-    <section id="sponsorManagement" class="section-container">
-        <h2>Add Sponsor</h2>
-        <form id="addSponsorForm">
-            <input type="text" id="sponsorName" placeholder="Sponsor Name" required>
-            <input type="text" id="sponsorContactInfo" placeholder="Contact Info" required>
-            <button type="submit">Add Sponsor</button>
+    <section id="fileManagement" class="section-container">
+        <h2>File Management</h2>
+        <form id="fileUploadForm" enctype="multipart/form-data">
+            <div>
+                <label for="fileInput">Select a file to upload:</label>
+                <input type="file" id="fileInput" name="fileInput" required>
+                <button type="submit">Upload File</button>
+            </div>
         </form>
-        <div id="sponsorsList"></div>
+        <div id="uploadedFileContainer">
+            <section id="filePreview" class="section-container">
+                <h2>Minyan Sheet</h2>
+                <iframe id="pdfViewer" style="width:100%; height:600px;"></iframe>
+            </section>
+        </div>
+        <button id="deleteUploadedFiles" onclick="deleteUploadedFiles()">Delete Current File</button>
     </section>
-    <section id="sponsorshipManagement" class="section-container">
-        <h2>Add Sponsorship</h2>
-        <form id="addSponsorshipForm">
-            <input type="number" id="sponsorId" placeholder="Sponsor ID" required>
-            <input type="number" id="detailId" placeholder="Detail ID" required>
-            <input type="date" id="sponsorshipDate" required>
-            <input type="number" id="amount" placeholder="Amount" required>
-            <button type="submit">Add Sponsorship</button>
-        </form>
-        <div id="sponsorshipsList"></div>
-    </section>
-    </section>
-    <section id="sponsorshipInfo" class="section-container">
-        <h2>Sponsor and Sponsorship Information</h2>
-        <div id="sponsorsList" class="list-container"></div>
-        <div id="sponsorshipsList" class="list-container"></div>
-    </section>
+
 </main>
-<script src="../js/main.js"></script>
 <footer>
     <p>&copy; Kehilas Lev V'Nefesh 2024, All rights reserved.</p>
 </footer>
+<script src="../js/admin.js"></script>
 </body>
-</html>
 
+</html>

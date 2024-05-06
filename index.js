@@ -2,44 +2,22 @@ const express = require('express');
 const session = require('express-session');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcrypt');
+const Stripe = require('stripe');
+
 require('dotenv').config();
 
 const app = express();
 const port = 4000;
-
-app.use(express.json());
-app.use(cors());
-
-app.use(session({
-    secret: 'your_secret_key',  // Secret key to sign the session ID cookie
-    resave: false,              // Forces the session to be saved back to the session store
-    saveUninitialized: true,    // Forces a session that is "uninitialized" to be saved to the store
-    cookie: {
-        secure: false,          // Set to true if you have HTTPS enabled
-        httpOnly: true,         // Minimizes risk of XSS attacks
-        maxAge: 1000 * 60 * 60  // Cookie expires after 1 hour
-    }
-}));
-
-async function query(sql, params) {
-    try {
-        const [results, ] = await pool.query(sql, params);
-        return results;
-    } catch (error) {
-        console.error('Query error:', error);
-        throw error;  // Rethrowing the error to handle it in the calling function
-    }
-}
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 const pool = mysql.createPool({
-    host: process.env.DB_HOST_DEV,
-    user: process.env.DB_USER_DEV,
-    password: process.env.DB_PASS_DEV,
-    database: process.env.DB_NAME_DEV,
+    host: process.env.DB_HOST_PROD,
+    user: process.env.DB_USER_PROD,
+    password: process.env.DB_PASS_PROD,
+    database: process.env.DB_NAME_PROD,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -47,17 +25,34 @@ const pool = mysql.createPool({
 
 pool.on('error', err => {
     console.error('Unexpected error on idle MySQL connection', err);
-    process.exit(1);
 });
 
+
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'Public')));
+app.use(cors());
+app.use(session({
+    secret: 'your_secret_key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false, httpOnly: true, maxAge: 3600000 }
+}));
 app.use((req, res, next) => {
-    console.log('Request received');
-    if (req.someConditionFails) {
-        res.status(401).send('Unauthorized'); // This would stop the request prematurely
-    } else {
-        next(); // Ensure next() is called correctly
-    }
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    next();
 });
+
+async function query(sql, params) {
+    const connection = await pool.getConnection();
+    try {
+        const [results] = await connection.query(sql, params);
+        return results;
+    } finally {
+        connection.release();
+    }
+}
 
 
 app.post('/api/minyan', async (req, res) => {
@@ -105,28 +100,42 @@ app.delete('/api/minyan/:id', async (req, res) => {
     }
 });
 
-// Multer setup for file uploads
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/') // make sure this folder exists
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname)) // Appending extension
+app.delete('/api/minyan', async (req, res) => {
+    const sql = 'DELETE FROM minyan_times'; // Adjust SQL command as needed
+    try {
+        const result = await query(sql);
+        if (result.affectedRows > 0) {
+            res.send({ message: 'All Minyan times cleared successfully' });
+        } else {
+            res.status(404).send({ message: 'No Minyan times found to delete' });
+        }
+    } catch (err) {
+        console.error('Failed to clear Minyan times:', err);
+        res.status(500).send({ error: 'Internal server error', detail: err.message });
     }
 });
+
+
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// POST route for file upload
 app.post('/api/upload', upload.single('fileInput'), async (req, res) => {
     if (!req.file) {
         return res.status(400).send({ error: 'No file uploaded.' });
     }
 
-    const { originalname, filename, path: filePath, size } = req.file;
+    const { originalname, buffer, size } = req.file;
 
-    const sql = `INSERT INTO file_uploads (original_name, file_path, file_size) VALUES (?, ?, ?)`;
+    if (!buffer) {
+        return res.status(400).send({ error: 'File data is missing.' });
+    }
+
+    // Delete the existing file data
+    await query('TRUNCATE TABLE file_uploads');
+
+    const sql = `INSERT INTO file_uploads (original_name, file_data, file_size) VALUES (?, ?, ?)`;
     try {
-        await pool.query(sql, [originalname, filePath, size]);
+        await query(sql, [originalname, buffer, size]);
         res.status(201).send({ message: 'File uploaded successfully' });
     } catch (error) {
         console.error('Error uploading file:', error);
@@ -135,28 +144,18 @@ app.post('/api/upload', upload.single('fileInput'), async (req, res) => {
 });
 
 app.get('/api/files', async (req, res) => {
-    const sql = 'SELECT id, original_name, file_path, file_size, upload_date FROM file_uploads';
+    const sql = 'SELECT original_name, file_data FROM file_uploads LIMIT 1';
     try {
-        const [results, ] = await pool.query(sql);
-        if (results.length > 0) {
-            res.json(results);
+        const rows = await query(sql);  // Removed destructuring based on your function definition
+        if (rows.length > 0) {
+            const { original_name, file_data } = rows[0];
+            console.log("Serving file:", original_name);
+            res.setHeader('Content-Disposition', `inline; filename="${original_name}"`);
+            res.setHeader('Content-Type', 'application/pdf');
+            res.send(file_data);
         } else {
-            res.status(404).send({ message: 'No files found' });
-        }
-    } catch (error) {
-        console.error('Failed to retrieve files:', error);
-        res.status(500).send({ error: 'Internal server error', detail: error.message });
-    }
-});
-
-app.get('/api/files/:id', async (req, res) => {
-    const sql = 'SELECT * FROM file_uploads WHERE id = ?';
-    try {
-        const [results, ] = await pool.query(sql, [req.params.id]);
-        if (results.length > 0) {
-            res.json(results[0]);
-        } else {
-            res.status(404).send({ message: 'File not found' });
+            console.log('No files available in the database');
+            res.status(404).send('No files available');
         }
     } catch (error) {
         console.error('Failed to retrieve file:', error);
@@ -164,22 +163,43 @@ app.get('/api/files/:id', async (req, res) => {
     }
 });
 
+app.get('/api/download', async (req, res) => {
+    const { original_name } = req.query;
+    if (!original_name) {
+        return res.status(400).send({ error: 'Filename is required' });
+    }
 
-app.get('/api/download/:id', async (req, res) => {
-    const sql = 'SELECT file_path, original_name FROM file_uploads WHERE id = ?';
+    const sql = 'SELECT file_data FROM file_uploads WHERE original_name = ? LIMIT 1';
     try {
-        const [results, ] = await pool.query(sql, [req.params.id]);
-        if (results.length > 0) {
-            const { file_path, original_name } = results[0];
-            res.download(file_path, original_name);
+        const rows = await query(sql, [original_name]);
+        if (rows.length > 0) {
+            const { file_data } = rows[0];
+            res.setHeader('Content-Disposition', `attachment; filename="${original_name}"`);
+            res.setHeader('Content-Type', 'application/pdf');
+            res.send(file_data);
         } else {
-            res.status(404).send({ message: 'File not found' });
+            res.status(404).send('File not found');
         }
     } catch (error) {
         console.error('Failed to download file:', error);
         res.status(500).send({ error: 'Internal server error', detail: error.message });
     }
 });
+
+
+app.delete('/api/files', async (req, res) => {
+    const sql = 'TRUNCATE TABLE file_uploads'; // This SQL command will delete all entries in the table
+    try {
+        const result = await query(sql);
+        console.log('All files deleted successfully');
+        res.send({ message: 'All files deleted successfully' });
+    } catch (err) {
+        console.error('Failed to delete file:', err);
+        res.status(500).send({ error: 'Internal server error', detail: err.message });
+    }
+});
+
+
 
 app.post('/api/announcement', async (req, res) => {
     const { header, text } = req.body;
@@ -212,6 +232,18 @@ app.delete('/api/announcement/:id', async (req, res) => {
         res.status(500).send({ error: 'Internal server error' });
     }
 });
+
+app.delete('/api/announcement', async (req, res) => {
+    const sql = `TRUNCATE TABLE announcements`;
+    try {
+        await query(sql);
+        res.send({ message: 'All announcements cleared successfully' });
+    } catch (err) {
+        console.error('Failed to clear announcements:', err);
+        res.status(500).send({ error: 'Internal server error', detail: err.message });
+    }
+});
+
 
 app.post('/api/sponsors', async (req, res) => {
     const { name, sponsored_for, details } = req.body;
@@ -254,12 +286,69 @@ app.delete('/api/sponsors/:id', async (req, res) => {
     }
 });
 
-app.post('/api/sponsorships', async (req, res) => {
-    const { sponsor_id, detail_id, date, amount } = req.body;
-    const sql = `INSERT INTO sponsorships (sponsor_id, detail_id, date, amount)
-                 VALUES (?, ?, ?, ?)`;
+app.get('/api/sponsorships', async (req, res) => {
+    const sql = `
+        SELECT sr.id, s.name AS sponsor_name, sr.comments, ps.title AS sponsorship_type
+        FROM sponsorship_records sr
+        JOIN sponsors s ON sr.sponsor_id = s.id
+        JOIN parnes_sponsorships ps ON sr.sponsorship_id = ps.id
+        UNION
+        SELECT sr.id, s.name AS sponsor_name, sr.comments, ks.title AS sponsorship_type
+        FROM sponsorship_records sr
+        JOIN sponsors s ON sr.sponsor_id = s.id
+        JOIN kiddush_sponsorships ks ON sr.sponsorship_id = ks.id`;
     try {
-        const result = await query(sql, [sponsor_id, detail_id, date, amount]);
+        const results = await query(sql);
+        if (results && results.length > 0) {
+            console.log('Sponsorships found:', results);
+            res.json(results);
+        } else {
+            console.log('No sponsorships found');
+            res.status(404).send({ message: 'No sponsorships found' });
+        }
+    } catch (err) {
+        console.error("Failed to retrieve sponsorships:", err);
+        res.status(500).send({ error: 'Internal server error', detail: err.message });
+    }
+});
+
+
+app.get('/api/parnes-sponsorships', async (req, res) => {
+    const sql = `SELECT * FROM parnes_sponsorships`;
+    try {
+        const parnesSponsorships = await query(sql);
+        if (parnesSponsorships.length > 0) {
+            res.json(parnesSponsorships);
+        } else {
+            res.status(404).send({ message: 'No parnes sponsorships found' });
+        }
+    } catch (err) {
+        console.error("Failed to retrieve parnes sponsorships:", err);
+        res.status(500).send({ error: 'Internal server error', detail: err.message });
+    }
+});
+
+app.get('/api/kiddush-sponsorships', async (req, res) => {
+    const sql = `SELECT * FROM kiddush_sponsorships`;
+    try {
+        const kiddushSponsorships = await query(sql);
+        if (kiddushSponsorships.length > 0) {
+            res.json(kiddushSponsorships);
+        } else {
+            res.status(404).send({ message: 'No kiddush sponsorships found' });
+        }
+    } catch (err) {
+        console.error("Failed to retrieve kiddush sponsorships:", err);
+        res.status(500).send({ error: 'Internal server error', detail: err.message });
+    }
+});
+
+app.post('/api/sponsorships', async (req, res) => {
+    const { sponsor_id, sponsorship_id, amount_paid, comments, sponsorship_type } = req.body;
+    let sql = `INSERT INTO sponsorship_records (sponsor_id, sponsorship_id, amount_paid, comments, sponsorship_type)
+               VALUES (?, ?, ?, ?, ?)`;
+    try {
+        const result = await query(sql, [sponsor_id, sponsorship_id, amount_paid, comments, sponsorship_type]);
         res.status(201).send({ id: result.insertId, message: 'Sponsorship added successfully' });
     } catch (err) {
         console.error("Failed to add sponsorship:", err);
@@ -267,24 +356,14 @@ app.post('/api/sponsorships', async (req, res) => {
     }
 });
 
-app.get('/api/sponsorships', async (req, res) => {
-    const sql = `SELECT * FROM sponsorships`;
-    try {
-        const rows = await query(sql);
-        res.send(rows);
-    } catch (err) {
-        console.error("Failed to retrieve sponsorships:", err);
-        res.status(500).send({ error: 'Internal server error', detail: err.message });
-    }
-});
-
 app.delete('/api/sponsorships/:id', async (req, res) => {
     const { id } = req.params;
-    const sql = `DELETE FROM sponsorships WHERE sponsorship_id = ?`;
+    const sql = `DELETE FROM sponsorships WHERE id = ?`;
+
     try {
-        const result = await query(sql, [id]);
+        const [result] = await query(sql, [id]);
         if (result.affectedRows > 0) {
-            res.send({ message: 'Sponsorship deleted successfully', changes: result.affectedRows });
+            res.send({ message: 'Sponsorship deleted successfully' });
         } else {
             res.status(404).send({ message: "No sponsorship found with the given ID" });
         }
@@ -294,15 +373,19 @@ app.delete('/api/sponsorships/:id', async (req, res) => {
     }
 });
 
+
 app.put('/api/sponsorships/:id', async (req, res) => {
     const { id } = req.params;
-    const { sponsor_id, detail_id, amount, date } = req.body; // assuming these are the fields you might want to update
-    const sql = `UPDATE sponsorships SET sponsor_id = ?, detail_id = ?, amount = ?, date = ? WHERE sponsorship_id = ?`;
+    const { title, description, stripeLink } = req.body;
+    const sql = `
+        UPDATE sponsorships 
+        SET title = ?, description = ?, stripe_link = ? 
+        WHERE id = ?`;
 
     try {
-        const result = await query(sql, [sponsor_id, detail_id, amount, date, id]);
+        const [result] = await query(sql, [title, description, stripeLink, id]);
         if (result.affectedRows > 0) {
-            res.send({ message: 'Sponsorship updated successfully', changes: result.affectedRows });
+            res.send({ message: 'Sponsorship updated successfully' });
         } else {
             res.status(404).send({ message: 'No sponsorship found with the given ID' });
         }
@@ -311,6 +394,7 @@ app.put('/api/sponsorships/:id', async (req, res) => {
         res.status(500).send({ error: 'Internal server error', detail: err.message });
     }
 });
+
 
 app.post('/admin/login', async (req, res) => {
     const { username, password } = req.body;
@@ -325,7 +409,7 @@ app.post('/admin/login', async (req, res) => {
             return res.status(401).json({ error: 'No such user found' });
         }
 
-        const hashedPasswordFromDb = rows[0].password;
+        const hashedPasswordFromDb = rows[0].password.trim();
         const passwordMatch = await bcrypt.compare(password, hashedPasswordFromDb);
         if (passwordMatch) {
             req.session.user = { username };
@@ -362,7 +446,103 @@ app.get('/api/auth/check', (req, res) => {
     }
 });
 
+
+app.post('/api/create-payment-intent', async (req, res) => {
+    const { amount, description } = req.body;
+
+    try {
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: amount,  // amount in the smallest currency unit, e.g., cents for USD
+            currency: 'usd',
+            description: description,
+            payment_method_types: ['card'],
+        });
+
+        res.status(201).send({ paymentIntent: paymentIntent.client_secret });
+    } catch (err) {
+        console.error('Stripe error:', err);
+        res.status(500).send({ error: 'Internal server error', detail: err.message });
+    }
+});
+
+
+app.post('/api/initiate-payment', async (req, res) => {
+    const { sponsorshipId } = req.body;
+    const sql = `SELECT stripe_link FROM sponsorships WHERE id = ?`;
+
+    try {
+        const [rows] = await query(sql, [sponsorshipId]);
+        if (rows.length > 0) {
+            const stripeLink = rows[0].stripe_link;
+            res.json({ url: stripeLink });
+        } else {
+            res.status(404).send({ message: 'Sponsorship not found' });
+        }
+    } catch (err) {
+        console.error("Error initiating payment:", err);
+        res.status(500).send({ error: 'Internal server error', detail: err.message });
+    }
+});
+
+app.post('/api/webhooks', express.raw({type: 'application/json'}), (req, res) => {
+    const sig = req.headers['stripe-signature'];
+
+    let event;
+
+    try {
+        // Ensure the webhook is coming from Stripe by verifying the signature
+        event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    } catch (err) {
+        console.error(`Webhook Error: ${err.message}`);
+        res.status(400).send(`Webhook Error: ${err.message}`);
+        return;
+    }
+
+    // Handle the incoming event types
+    switch (event.type) {
+        case 'payment_intent.succeeded':
+            const paymentIntent = event.data.object; // The payment intent that succeeded
+            console.log(`PaymentIntent for ${paymentIntent.amount} was successful.`);
+            // Here, you could update your database or perform other actions based on the payment success
+            break;
+        case 'payment_intent.payment_failed':
+            const paymentIntentFailed = event.data.object;
+            console.log(`Payment for ${paymentIntentFailed.amount} failed.`);
+            // Handle payment failure (e.g., notify the user, log the failure, etc.)
+            break;
+        default:
+            console.log(`Unhandled event type ${event.type}`);
+    }
+
+    // Return a response to acknowledge receipt of the event
+    res.json({received: true});
+});
+
+
+async function handleSuccessfulPayment(paymentIntent) {
+    // Example: update database and send an email
+    try {
+        const updateResult = await query('UPDATE donations SET status = ? WHERE stripe_id = ?', ['completed', paymentIntent.id]);
+        sendReceiptEmail(paymentIntent);
+    } catch (error) {
+        console.error('Failed to process successful payment:', error);
+    }
+}
+
+function sendReceiptEmail(paymentIntent) {
+    // Implement email sending logic, possibly using a library like nodemailer
+    console.log('Sending receipt email for:', paymentIntent.amount);
+}
+
 app.use(express.static(path.join(__dirname, 'Public')));
+
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    next();
+});
+
 
 function checkAdmin(req, res, next) {
     if (req.session.isAuthenticated) {
@@ -437,6 +617,8 @@ app.get('*', (req, res) => {
 
 
 app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+    console.log(`Server running on {port}`);
     console.log('MySQL connection established');
 });
+
+

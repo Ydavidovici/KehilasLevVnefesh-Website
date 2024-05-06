@@ -4,41 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="../Css/Styles.css">
-    <script src="../js/main.js" defer></script>
     <title>Minyan Times - Kehilas Lev V'Nefesh</title>
 </head>
 <body class="main-container">
-    <div class="nav-container">
-        <nav class="nav">
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="minyan-times.html">Minyan Times</a></li>
-                <li><a href="donate.html">Donate/Sponsor</a></li>
-                <li><a href="contact.html">Contact Us</a></li>
-            </ul>
-        </nav>
-    </div>   
-    <main class="container">
-        <div class="section-container">
+<div class="nav-container">
+    <nav class="nav">
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="minyan-times.html" class="active">Minyan Times</a></li>
+            <li><a href="donate.html">Donate/Sponsor</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+    </nav>
+</div>
+<main class="container">
+    <section class="section-container">
         <h2>Minyan Times</h2>
         <p>Stay updated with our latest minyan schedules. Please note times
             may change for special occasions or holidays.</p>
+        <div id="minyanTimesList">
             <!-- Minyan times will be dynamically inserted here -->
         </div>
-
-        <div class="section-container">
-            <h2>Minyan Sheet</h2>
-            <div id="uploadedFileContainer">
-                <!-- Uploaded file will be dynamically inserted here -->
-            </div>
+    </section>
+    <section class="section-container">
+        <h2>Minyan Sheet</h2>
+        <div id="uploadedFileContainer">
+            <section id="filePreview" class="section-container">
+                <iframe id="pdfViewer" style="width:100%; height:600px;"></iframe>
+            </section>
         </div>
-        <div class="section-container" id="announcements">
-            <h2>Announcements</h2>
-            <div id="announcementList">
-                <!-- Announcements will be dynamically inserted here -->
-            </div>
+    </section>
+    <section class="section-container" id="announcements">
+        <h2>Announcements</h2>
+        <div id="announcementList">
+            <!-- Announcements will be dynamically inserted here -->
         </div>
-    </main>
+    </section>
+</main>
+<script src="../js/minyan-times.js"></script>
 </body>
 <footer>
     <p>&copy; Kehilas Lev V'Nefesh 2024, All rights reserved.</p>

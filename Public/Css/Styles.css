@@ -3,6 +3,7 @@
 
 /* Reset & Body Styling */
 body {
+    height: 100%;
     margin: 0;
     padding: 0;
     color: #333; /* Dark grey text for better readability */
@@ -18,30 +19,32 @@ body {
     background-color: #f5f5f5; /* Light grey background */
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    min-height: 100%; /* Minimum height to push the footer down */
+    position: relative; /* Establishes a positioning context */
+    padding-bottom: 50px; /* Space for the footer */
 }
+
+
 
 /* Navigation Bar Styling */
 .nav-container {
     padding: 20px 50px;
     display: flex;
-    justify-content: center; /* Align nav links in the center */
+    justify-content: center; /* Center align the navigation links */
     align-items: center;
-    background: #ddd;
+    background: #ddd; /* Light grey background for a soft look */
     margin-bottom: 20px;
-    border-radius: 25px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    position: relative;
-    top: 0;
-    z-index: 1000;
+    border-radius: 25px; /* Soft rounded corners for a modern feel */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 .nav-links {
-    list-style: none;
+    list-style: none; /* Remove default list styling */
     padding: 0;
     display: flex;
-    gap: 40px; /* Increase space between links */
+    gap: 40px; /* Space between each link */
     align-items: center;
-    font-size: 1.1em; /* Increase font size for visibility */
+    font-size: 1.1em; /* Slightly larger font for readability */
 }
 
 .nav-links li {
@@ -49,26 +52,36 @@ body {
 }
 
 .nav-links a {
-    color: #333;
-    text-decoration: none;
-    transition: color 0.3s ease-in-out;
+    color: #333; /* Dark grey for a strong, readable contrast */
+    text-decoration: none; /* Remove underlines to clean up the look */
+    padding: 10px; /* Padding for better clickability */
+    transition: color 0.3s ease-in-out, transform 0.3s ease; /* Smooth transitions for hover effects */
 }
 
 .nav-links a:hover, .nav-links a.active {
-    color: #000;
-    font-weight: bold; /* Make active or hovered link bold */
+    color: #0056b3; /* Highlight color on hover and active state */
+    transform: scale(1.1); /* Slightly enlarge links on hover for a dynamic effect */
+    text-decoration: none; /* Ensure no underline appears on hover */
 }
 
-/* Section Styling */
-.section-container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    width: 100%;
-    box-sizing: border-box;
-    text-align: left;
+/* Responsive Adjustments for Navigation */
+@media (max-width: 768px) {
+    .nav-container {
+        padding: 10px; /* Reduce padding on smaller screens */
+        border-radius: 0; /* Remove border radius for a full-width look on small devices */
+    }
+
+    .nav-links {
+        flex-direction: column; /* Stack links vertically on smaller screens */
+        gap: 10px; /* Less gap to accommodate compact layout */
+    }
+
+    .nav-links a {
+        padding: 10px 0; /* Adjust padding for better touch accessibility */
+    }
 }
+
+
 
 /* Description Styling */
 .description {
@@ -76,37 +89,19 @@ body {
     color: #666; /* Lighter grey for descriptions */
 }
 
-/* Link Styling */
-.section-container a {
-    display: inline-block;
-    margin-right: 20px;
-    color: #333;
-    background-color: #eaeaea; /* Slightly darker grey for contrast */
-    padding: 10px 15px;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: background-color 0.3s ease-in-out;
-}
-
-.section-container a:hover {
-    background-color: #ccc; /* Darken on hover */
-}
-
 /* Sponsorship Section Styling */
 #sponsorship-options {
     margin-top: 20px;
 }
 
-/* Footer Styling */
 footer {
     padding: 10px 0;
     text-align: center;
     background-color: #ddd; /* Consistent with nav background */
     color: #333;
-    position: relative;
-    bottom: 0;
     width: 100%;
-    border-radius: 25px;
+    border-radius: 25px; /* Adds a subtle curvature to the footer */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
 }
 
 /* Responsive Navigation */
@@ -183,7 +178,7 @@ input[type="submit"]:hover {
 }
 
 label {
-    display: block;
+    display:block;
     margin-bottom: 5px;
     color: #333; /* Dark grey for better readability */
     font-weight: bold; /* Make labels bold */
@@ -264,4 +259,239 @@ h2 {
     margin-bottom: 10px;
     background-color: #f9f9f9;
 }
+
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    border-radius: 5px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Announcement Items Styling */
+.announcement-item {
+    background-color: #e6f7ff; /* Light blue background for visual appeal */
+    border: 1px solid #ccc; /* Light grey border adds a subtle outline */
+    border-radius: 8px; /* Rounded corners for a softer, modern look */
+    padding: 15px; /* Sufficient padding for content separation */
+    margin-bottom: 10px; /* Spacing between announcement items */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+}
+
+.announcement-item strong {
+    display: block; /* Make the header a block element to ensure it appears on its own line */
+    color: #0056b3; /* A stronger blue to emphasize the header */
+    font-size: 1.2em; /* Larger font size for the header */
+    font-weight: bold; /* Bold font weight for emphasis */
+    margin-bottom: 5px; /* Spacing between the header and the text below */
+}
+
+.announcement-item p {
+    margin: 0; /* Remove margin to keep the text close to the header */
+    color: #333; /* Dark grey for text to ensure readability */
+    font-size: 1em; /* Standard font size for body text */
+}
+
+/* Hover effect to enhance interactivity */
+.announcement-item:hover {
+    background-color: #ccdfff; /* A different shade of blue for hover */
+    transform: translateX(5px); /* Slight horizontal movement on hover for a dynamic effect */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+}
+
+/* Minyan Items Styling */
+.minyan-item {
+    background-color: #f0f8ff; /* Very light blue background for distinction */
+    border: 1px solid #b6d4fe; /* Soft blue border for a subtle outline */
+    border-radius: 8px; /* Rounded corners for a modern look */
+    padding: 15px; /* Ample padding for clear content separation */
+    margin-bottom: 10px; /* Space between minyan items */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for a three-dimensional effect */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transitions for interactive effects */
+}
+
+.minyan-item strong {
+    display: block; /* Ensures the day and time are on their own line */
+    color: #0077cc; /* Distinctive blue for days to make them stand out */
+    font-size: 1.2em; /* Slightly larger font size for emphasis */
+    font-weight: bold; /* Bold font weight for heading-like appearance */
+    margin-bottom: 5px; /* Spacing below the day for clear separation */
+}
+
+.minyan-item span {
+    font-size: 1em; /* Standard font size for the time */
+    color: #666; /* Darker text for time for good readability */
+}
+
+/* Hover effect to increase interactivity */
+.minyan-item:hover {
+    background-color: #e0f2ff; /* Lighter blue on hover for visual feedback */
+    transform: translateY(-3px); /* Slight upward movement on hover for dynamic effect */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Stronger shadow for heightened contrast on hover */
+}
+
+/* Section Container Styling */
+.section-container {
+    background-color: #ffffff; /* Pure white background for a clean, professional look */
+    border: 1px solid #d1e3f8; /* Light blue border for a subtle visual boundary */
+    border-radius: 12px; /* Rounded corners for a softer, more modern appearance */
+    padding: 20px; /* Ample padding for a spacious internal layout */
+    margin-bottom: 20px; /* Space between sections for clear separation */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    transition: box-shadow 0.3s ease-in-out, transform 0.2s ease; /* Smooth transition for hover effects */
+}
+
+/* Hover effect for section containers */
+.section-container:hover {
+    transform: translateY(-2px); /* Slight lift to indicate interactivity */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Enhanced shadow for a popping effect */
+}
+
+/* Styling for headers within section containers */
+.section-container h2 {
+    color: #0056b3; /* Deep blue color for headers to stand out */
+    padding-bottom: 10px; /* Spacing below the header for a clean separation */
+    border-bottom: 2px solid #f0f8ff; /* Light blue underline for emphasis */
+    margin-bottom: 15px; /* Space below the border for content separation */
+}
+
+/* Styling for text within section containers */
+.section-container p {
+    color: #666666; /* Medium grey for easy readability */
+    line-height: 1.5; /* Adequate line spacing for readability */
+}
+
+/* Enhancements for form elements within sections for uniform appearance */
+.section-container input[type="text"],
+.section-container input[type="time"],
+.section-container select,
+.section-container textarea {
+    background-color: #f8f8f8; /* Slightly off-white background for inputs to indicate interactiveness */
+    border: 1px solid #ccc; /* Consistent border styling */
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); /* Inner shadow for a subtle inset effect */
+}
+
+.section-container input[type="text"]:focus,
+.section-container input[type="time"]:focus,
+.section-container select:focus,
+.section-container textarea:focus {
+    border-color: #007BFF; /* Highlight focus with a vivid blue border */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* Blue glow around the element to enhance focus visibility */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .section-container {
+        padding: 10px; /* Reduced padding on smaller screens */
+        margin-bottom: 10px; /* Reduced margin to save space */
+    }
+}
+
+.email-link {
+    color: #007BFF; /* Blue for visibility, matching typical hyperlink styling */
+    text-decoration: underline; /* Underline to indicate clickability */
+    font-weight: bold; /* Bold for emphasis */
+}
+
+.email-link:hover {
+    color: #0056b3; /* Darker blue on hover for interactive feedback */
+    text-decoration: none; /* Remove underline on hover for a clean look */
+}
+
+/* Contact Form Styling */
+form {
+    background-color: #f9f9f9; /* Light grey background for the form area */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px; /* Spacing from the previous content */
+}
+
+form label {
+    display: block; /* Ensure the label is on its own line */
+    margin-bottom: 5px;
+    color: #333; /* Consistent dark grey text for readability */
+}
+
+form input[type="text"],
+form input[type="email"],
+form textarea {
+    width: 100%; /* Full width to maintain form structure */
+    padding: 10px;
+    margin-bottom: 15px; /* Space below each input field */
+    border: 1px solid #ccc; /* Light grey border */
+    border-radius: 4px; /* Slightly rounded corners for a soft look */
+    background-color: #fff; /* White background */
+}
+
+form textarea {
+    resize: vertical; /* Allow vertical resizing only */
+}
+
+form button {
+    background-color: #007BFF; /* Bright blue for visibility and design consistency */
+    color: #fff; /* White text for contrast */
+    padding: 10px 20px;
+    border: none; /* Remove default border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Cursor change to indicate clickable */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+form button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Additional Contact Info Styling */
+h3 {
+    margin-top: 30px; /* Space above the secondary header */
+    color: #333; /* Dark grey for emphasis and consistency */
+}
+
+a {
+    color: #007BFF; /* Style links with blue to indicate interactivity */
+    text-decoration: none; /* No underline to keep it clean */
+}
+
+a:hover {
+    text-decoration: underline; /* Underline on hover for feedback */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .nav-container, .main-container {
+        padding: 10px; /* Adjust padding for smaller screens */
+    }
+}
+
+
 

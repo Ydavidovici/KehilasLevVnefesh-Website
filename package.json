@@ -2,38 +2,25 @@
   "name": "kehilaslevvnefesh",
   "version": "1.0.0",
   "main": "index.js",
-  "engines": {
-    "node": "14.7.0"
-  },
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "jest"
+    "dev": "nodemon index.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
+    "dotenv": "^16.4.5",
     "ejs": "^3.1.5",
     "express": "^4.17.1",
     "express-session": "^1.18.0",
-    "fs": "0.0.1-security",
-    "https": "^1.0.0",
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",
     "mysql2": "^3.9.6",
     "nodemailer": "^6.9.13",
-    "path": "^0.12.7",
-    "stripe": "^8.130.0"
+    "stripe": "^15.4.0"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.12",
-    "jest": "^24.9.0",
-    "jest-environment-jsdom": "^24.9.0",
-    "jest-fetch-mock": "^3.0.3",
-    "jsdom": "^15.2.1",
-    "nodemon": "^2.0.4",
-    "supertest": "^4.0.2"
+    "nodemon": "^3.1.0"
   }
 }

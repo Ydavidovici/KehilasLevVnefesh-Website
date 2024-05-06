@@ -7,47 +7,40 @@
     <link rel="stylesheet" type="text/css" href="../Css/Styles.css">
 </head>
 <body class="main-container">
-    <header>
-        <div class="nav-container">
-            <nav class="nav">
-                <ul class="nav-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="minyan-times.html">Minyan Times</a></li>
-                    <li><a href="donate.html" class="active">Donate/Sponsor</a></li>
-                    <li><a href="contact.html">Contact Us</a></li>
-                </ul>
-            </nav>
-        </div>        
-    </header>
-    <main class="main-container">
-        <section id="donation-section">
-            <h2>Donate</h2>
-            <p class="description">
-                Your generous contribution supports our community activities and services. Every donation helps us continue our mission.
-            </p>
-            <div class="donation-links">
-                <a href="https://donate.stripe.com/test_9AQfZh76Uatc2Kk5kk" target="_blank">Donate with Stripe</a>
-                <a href="https://www.paypal.com/donate?hosted_button_id=YOUR_PAYPAL_ID" target="_blank">Donate with PayPal</a>
-                <p>Or donate with Zelle: kehilaslevvnefesh@gmail.com</p>
-            </div>
-        </section>
-        <div class="section-container">
-            <section id="sponsorship-section">
-                <h2>Sponsorship Options</h2>
-                <p class="description">
-                    Consider sponsoring an event or program at Kehilas Lev V'Nefesh. Below are the sponsorship opportunities currently available.
-                </p>
-                <div id="sponsorshipOptions">
-                    <!-- Sponsorship options will be inserted dynamically here with JavaScript -->
-                </div>
-            </section>
+<header>
+    <div class="nav-container">
+        <nav class="nav">
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="minyan-times.html">Minyan Times</a></li>
+                <li><a href="donate.html" class="active">Donate/Sponsor</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+<main class="main-container">
+    <section class="section-container">
+        <h2>Donate</h2>
+        <p class="description">
+            Your generous contribution supports our community activities and services. Every donation helps us continue our mission.
+        </p>
+        <div class="donation-links">
+            <a href="https://donate.stripe.com/test_9AQfZh76Uatc2Kk5kk" target="_blank">Donate with Stripe</a>
+            <a href="https://www.paypal.com/donate?hosted_button_id=YOUR_PAYPAL_ID" target="_blank">Donate with PayPal</a>
+            <p>Or donate with Zelle: kehilaslevvnefesh@gmail.com</p>
         </div>
-    </main>
-    <footer>
-        <p>&copy; Kehilas Lev V'Nefesh 2024, All rights reserved.</p>
-    </footer>
-
-    <script src="../js/main.js"></script>
-    <script src="https://js.stripe.com/v3/"></script>
+    </section>
+    <section class="section-container">
+        <h2>Sponsorships</h2>
+        <p>Interested in sponsoring a Kiddush? Email us <a href="mailto:Yanksejay@aol.com" class="email-link">here</a>.</p>
+        <p>Interested in Sponsoring Parnes Hachodesh or Shavuah? Email us <a href="mailto:kehilaslevvnefesh@gmail.org" class="email-link">here</a>.</p>
+    </section>
+</main>
+<footer>
+    <p>&copy; Kehilas Lev V'Nefesh 2024, All rights reserved.</p>
+</footer>
+<script src="../js/donate.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
 </body>
 </html>
