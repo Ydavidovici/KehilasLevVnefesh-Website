@@ -7,9 +7,7 @@ Kehilas Lev V'Nefesh is a vibrant shteeble located in Bergenfield, New Jersey, d
 - [Features](#features)
 - [Technology Stack](#technology-stack)
 - [Setup and Installation](#setup-and-installation)
-- [Usage](#usage)
 - [API Documentation](#api-documentation)
-- [Contributing](#contributing)
 - [License](#license)
 - [Contact Information](#contact-information)
 
@@ -32,15 +30,14 @@ Kehilas Lev V'Nefesh is a vibrant shteeble located in Bergenfield, New Jersey, d
 ## Setup and Installation
 
 To get the website running locally:
-1. Clone the repository:
-   ```bash
-    git clone https://github.com/yaakovdavidovici/kehilaslevvnefesh-website.git
 
-2. run:
+1. Clone the repo:
+```bash
+    git clone https://github.com/yaakovdavidovici/kehilaslevvnefesh-website.git
 ```
 npm install
 ```
-
+```
 ## Deployment
 
 To deploy this project run
@@ -54,62 +51,89 @@ npm start
 ### Minyan Management
 
 #### Get All Minyan Times
+
 ```http
 GET /api/minyan
 ```
+
 #### Get Specific Minyan Time
+
 ```http
 GET /api/minyan/{id}
 ```
+
 #### Add A Minyan Time
+
 ```http
 POST /api/minyan
 ```
+
 #### Update A Minyan By ID
+
 ```http
 PUT /api/minyan/{id}
 ```
+
 #### Delete A Minyan
+
 ```http
 DELETE /api/minyan/{id}
 ```
+
 #### Delete All Minyanim
+
 ```http
 DELETE /api/minyan
 ```
+
 ### File Management
 
 #### Upload a File
+
 ```http
 POST /api/upload
 ```
+
 #### Get Latest Uploaded File
+
 ```http
 GET /api/files
 ```
+
 #### Download a File
+
 ```http
 GET /api/download
 ```
+
 #### Delete All Files
+
 ```http
 DELETE /api/files
 ```
+
 ### Announcement Management
 
 #### Create an Announcement
+
 ```http
 POST /api/announcement
 ```
+
 #### Get All Announcements
+
 ```http
 GET /api/announcement
 ```
+
 #### Delete Specific Announcement
+
 ```http
 DELETE /api/announcement/{id}
 ```
+
 #### Clear All Announcements
+
 ```http
 DELETE /api/announcement
 ```
@@ -117,14 +141,19 @@ DELETE /api/announcement
 ### Authentication and User Management
 
 #### Admin Login
+
 ```http
 POST /admin/login
 ```
+
 #### Admni Logout
+
 ```http
 GET /logout
 ```
+
 #### Check Authentication Status
+
 ```http
 GET /api/auth/check
 ```
