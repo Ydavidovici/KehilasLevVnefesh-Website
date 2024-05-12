@@ -13,8 +13,7 @@ RUN npm install
 # Bundle the app's source code inside the Docker image
 COPY . .
 
-# Make port 3000 available to the world outside this container
-EXPOSE 3000
+EXPOSE 4000
 
 # Define environment variable
 ENV NODE_ENV production
