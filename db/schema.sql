@@ -1,4 +1,4 @@
-USE kehilas_lev_vnefesh_dev;
+USE eobrmgmy_kehilas_lev_vnefesh;
 
 CREATE TABLE IF NOT EXISTS minyan_times (
 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -79,7 +79,7 @@ id INT AUTO_INCREMENT PRIMARY KEY,
 username VARCHAR(255) NOT NULL UNIQUE,
 password VARCHAR(255) NOT NULL
 );
-
+/*
 INSERT INTO kiddush_sponsorships (title, description) VALUES
                                                           ('Kiddush Bereishis', 'Kiddush sponsorship for Parshas Bereishis'),
                                                           ('Kiddush Noach', 'Kiddush sponsorship for Parshas Noach'),
@@ -207,3 +207,7 @@ INSERT INTO parnes_sponsorships (type, title, description) VALUES
                                                                ('monthly', 'Parnes HaChodesh Tevet', 'Monthly sponsorship for all events in Tevet'),
                                                                ('monthly', 'Parnes HaChodesh Shevat', 'Monthly sponsorship for all events in Shevat'),
                                                                ('monthly', 'Parnes HaChodesh Adar', 'Monthly sponsorship for all events in Adar');
+*/
+
+INSERT INTO admins (id, username, password) VALUES
+                                                ('1' , 'admin1' , 'admin1')

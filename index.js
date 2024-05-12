@@ -4,7 +4,6 @@ const multer = require('multer');
 const path = require('path');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
-const bcrypt = require('bcrypt');
 const Stripe = require('stripe');
 
 require('dotenv').config();
@@ -612,6 +611,7 @@ app.get('/contact.html', (req, res) => {
 
 
 app.get('*', (req, res) => {
+    // Send 'index.html' for any other requests.
     res.sendFile(path.join(__dirname, 'Public', 'html', 'index.html'));
 });
 
