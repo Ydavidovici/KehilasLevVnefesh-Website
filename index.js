@@ -13,10 +13,7 @@ const port =  process.env.PORT || 4000;
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 const pool = mysql.createPool({
-    host: process.env.DB_HOST_PROD,
-    user: process.env.DB_USER_PROD,
-    password: process.env.DB_PASS_PROD,
-    database: process.env.DB_NAME_PROD,
+    uri: process.env.JAWSDB_URL,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -30,12 +27,14 @@ pool.on('error', err => {
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'Public')));
 app.use(cors());
+
 app.use(session({
     secret: 'your_secret_key',
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false, httpOnly: true, maxAge: 3600000 }
 }));
+
 app.use((req, res, next) => {
     res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.set('Pragma', 'no-cache');
@@ -52,6 +51,7 @@ async function query(sql, params) {
         connection.release();
     }
 }
+
 
 
 app.post('/api/minyan', async (req, res) => {
