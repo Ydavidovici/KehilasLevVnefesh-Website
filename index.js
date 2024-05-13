@@ -9,7 +9,7 @@ const Stripe = require('stripe');
 require('dotenv').config();
 
 const app = express();
-const port = 4000;
+const port =  process.env.PORT || 4000;
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 const pool = mysql.createPool({
