@@ -25,7 +25,7 @@ Kehilas Lev V'Nefesh is a vibrant shteeble located in Bergenfield, New Jersey, d
 - **Backend**: Node.js, Express
 - **Database**: MySQL
 - **Payment Processing**: Stripe Integration for sponsorships
-- **Hosting/Deployment**: Bluehost
+- **Hosting/Deployment**: Heroku
 
 ## Setup and Installation
 
