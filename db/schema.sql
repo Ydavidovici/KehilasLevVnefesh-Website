@@ -1,4 +1,3 @@
-USE eobrmgmy_kehilas_lev_vnefesh;
 
 CREATE TABLE IF NOT EXISTS minyan_times (
 id INT AUTO_INCREMENT PRIMARY KEY,
