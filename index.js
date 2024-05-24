@@ -9,7 +9,7 @@ const Stripe = require('stripe');
 require('dotenv').config();
 
 const app = express();
-const port =  process.env.PORT || 4000;
+const port = process.env.PORT || 4000;
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 const pool = mysql.createPool({
@@ -23,13 +23,12 @@ pool.on('error', err => {
     console.error('Unexpected error on idle MySQL connection', err);
 });
 
-
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'Public')));
 app.use(cors());
 
 app.use(session({
-    secret: 'your_secret_key',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false, httpOnly: true, maxAge: 3600000 }
@@ -51,8 +50,6 @@ async function query(sql, params) {
         connection.release();
     }
 }
-
-
 
 app.post('/api/minyan', async (req, res) => {
     const { name, time, day } = req.body;
