@@ -5,7 +5,6 @@ const path = require('path');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
 const Stripe = require('stripe');
-
 require('dotenv').config();
 
 const app = express();
