@@ -8,3 +8,5 @@ info.php
 wp-config.php
 jest.setup.js
 .env
+.idea/
+.idea

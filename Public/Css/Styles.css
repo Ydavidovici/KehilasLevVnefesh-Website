@@ -24,8 +24,6 @@ body {
     padding-bottom: 50px; /* Space for the footer */
 }
 
-
-
 /* Navigation Bar Styling */
 .nav-container {
     padding: 20px 50px;
@@ -81,8 +79,6 @@ body {
     }
 }
 
-
-
 /* Description Styling */
 .description {
     margin-bottom: 20px;
@@ -94,6 +90,7 @@ body {
     margin-top: 20px;
 }
 
+/* Footer Styling */
 footer {
     padding: 10px 0;
     text-align: center;
@@ -102,25 +99,6 @@ footer {
     width: 100%;
     border-radius: 25px; /* Adds a subtle curvature to the footer */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
-}
-
-/* Responsive Navigation */
-@media (max-width: 768px) {
-    .nav-container {
-        padding: 20px;
-        border-radius: 0; /* Make nav flat on small screens */
-        top: 0;
-        margin-bottom: 0;
-    }
-
-    .nav-links {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .nav-links a {
-        padding: 10px 0; /* Add padding for touch targets */
-    }
 }
 
 /* Typography Adjustments */
@@ -145,7 +123,6 @@ input {
     background-color: #fff; /* White background */
 }
 
-/* Submit Button Styling */
 input[type="submit"] {
     background-color: #333; /* Dark grey for contrast */
     color: #fff; /* White text */
@@ -178,7 +155,7 @@ input[type="submit"]:hover {
 }
 
 label {
-    display:block;
+    display: block;
     margin-bottom: 5px;
     color: #333; /* Dark grey for better readability */
     font-weight: bold; /* Make labels bold */
@@ -260,7 +237,7 @@ h2 {
     background-color: #f9f9f9;
 }
 
-
+/* Modal Styling */
 .modal {
     display: none; /* Hidden by default */
     position: fixed;
@@ -287,61 +264,7 @@ h2 {
     color: #aaa;
     float: right;
     font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-/* Announcement Items Styling */
-.announcement-item {
-    background-color: #e6f7ff; /* Light blue background for visual appeal */
-    border: 1px solid #ccc; /* Light grey border adds a subtle outline */
-    border-radius: 8px; /* Rounded corners for a softer, modern look */
-    padding: 15px; /* Sufficient padding for content separation */
-    margin-bottom: 10px; /* Spacing between announcement items */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
-}
-
-.announcement-item strong {
-    display: block; /* Make the header a block element to ensure it appears on its own line */
-    color: #0056b3; /* A stronger blue to emphasize the header */
-    font-size: 1.2em; /* Larger font size for the header */
-    font-weight: bold; /* Bold font weight for emphasis */
-    margin-bottom: 5px; /* Spacing between the header and the text below */
-}
-
-.announcement-item p {
-    margin: 0; /* Remove margin to keep the text close to the header */
-    color: #333; /* Dark grey for text to ensure readability */
-    font-size: 1em; /* Standard font size for body text */
-}
-
-/* Hover effect to enhance interactivity */
-.announcement-item:hover {
-    background-color: #ccdfff; /* A different shade of blue for hover */
-    transform: translateX(5px); /* Slight horizontal movement on hover for a dynamic effect */
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
-}
-
-/* Minyan Items Styling */
-.minyan-item {
-    background-color: #f0f8ff; /* Very light blue background for distinction */
-    border: 1px solid #b6d4fe; /* Soft blue border for a subtle outline */
-    border-radius: 8px; /* Rounded corners for a modern look */
-    padding: 15px; /* Ample padding for clear content separation */
-    margin-bottom: 10px; /* Space between minyan items */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for a three-dimensional effect */
-    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transitions for interactive effects */
-}
-
-.minyan-item strong {
-    display: block; /* Ensures the day and time are on their own line */
-    color: #0077cc; /* Distinctive blue for days to make them stand out */
+    font:#0077cc; /* Distinctive blue for days to make them stand out */
     font-size: 1.2em; /* Slightly larger font size for emphasis */
     font-weight: bold; /* Bold font weight for heading-like appearance */
     margin-bottom: 5px; /* Spacing below the day for clear separation */
@@ -492,6 +415,4 @@ a:hover {
         padding: 10px; /* Adjust padding for smaller screens */
     }
 }
-
-
 
