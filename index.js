@@ -5,6 +5,7 @@ const path = require('path');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
 const Stripe = require('stripe');
+const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 const app = express();
@@ -114,7 +115,10 @@ app.delete('/api/minyan', async (req, res) => {
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+
 app.post('/api/upload', upload.single('fileInput'), async (req, res) => {
+    console.log('Received file:', req.file); // Debug log
+
     if (!req.file) {
         return res.status(400).send({ error: 'No file uploaded.' });
     }
@@ -125,12 +129,23 @@ app.post('/api/upload', upload.single('fileInput'), async (req, res) => {
         return res.status(400).send({ error: 'File data is missing.' });
     }
 
-    // Delete the existing file data
-    await query('TRUNCATE TABLE file_uploads');
-
-    const sql = `INSERT INTO file_uploads (original_name, file_data, file_size) VALUES (?, ?, ?)`;
     try {
-        await query(sql, [originalname, buffer, size]);
+        // Ensure the table exists
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS file_uploads (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                original_name VARCHAR(255) NOT NULL,
+                file_data LONGBLOB NOT NULL,
+                file_size INT NOT NULL,
+                upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        // Delete the existing file data
+        await pool.query('TRUNCATE TABLE file_uploads');
+
+        const sql = `INSERT INTO file_uploads (original_name, file_data, file_size) VALUES (?, ?, ?)`;
+        await pool.query(sql, [originalname, buffer, size]);
         res.status(201).send({ message: 'File uploaded successfully' });
     } catch (error) {
         console.error('Error uploading file:', error);
@@ -181,7 +196,6 @@ app.get('/api/download', async (req, res) => {
     }
 });
 
-
 app.delete('/api/files', async (req, res) => {
     const sql = 'TRUNCATE TABLE file_uploads'; // This SQL command will delete all entries in the table
     try {
@@ -193,8 +207,6 @@ app.delete('/api/files', async (req, res) => {
         res.status(500).send({ error: 'Internal server error', detail: err.message });
     }
 });
-
-
 
 app.post('/api/announcement', async (req, res) => {
     const { header, text } = req.body;

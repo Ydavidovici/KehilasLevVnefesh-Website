@@ -264,31 +264,31 @@ h2 {
     color: #aaa;
     float: right;
     font-size: 28px;
-    font:#0077cc; /* Distinctive blue for days to make them stand out */
-    font-size: 1.2em; /* Slightly larger font size for emphasis */
-    font-weight: bold; /* Bold font weight for heading-like appearance */
-    margin-bottom: 5px; /* Spacing below the day for clear separation */
+    font:#0077cc;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
 .minyan-item span {
-    font-size: 1em; /* Standard font size for the time */
-    color: #666; /* Darker text for time for good readability */
+    font-size: 1em;
+    color: #666;
 }
 
-/* Hover effect to increase interactivity */
+
 .minyan-item:hover {
-    background-color: #e0f2ff; /* Lighter blue on hover for visual feedback */
-    transform: translateY(-3px); /* Slight upward movement on hover for dynamic effect */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Stronger shadow for heightened contrast on hover */
+    background-color: #e0f2ff;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Section Container Styling */
+
 .section-container {
-    background-color: #ffffff; /* Pure white background for a clean, professional look */
-    border: 1px solid #d1e3f8; /* Light blue border for a subtle visual boundary */
-    border-radius: 12px; /* Rounded corners for a softer, more modern appearance */
-    padding: 20px; /* Ample padding for a spacious internal layout */
-    margin-bottom: 20px; /* Space between sections for clear separation */
+    background-color: #ffffff;
+    border: 1px solid #d1e3f8;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
     transition: box-shadow 0.3s ease-in-out, transform 0.2s ease; /* Smooth transition for hover effects */
 }

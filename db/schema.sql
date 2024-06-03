@@ -1,3 +1,4 @@
+USE tyq0g1krbsuxpsy7;
 
 CREATE TABLE IF NOT EXISTS minyan_times (
 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -207,6 +208,6 @@ INSERT INTO parnes_sponsorships (type, title, description) VALUES
                                                                ('monthly', 'Parnes HaChodesh Shevat', 'Monthly sponsorship for all events in Shevat'),
                                                                ('monthly', 'Parnes HaChodesh Adar', 'Monthly sponsorship for all events in Adar');
 */
-
+TRUNCATE TABLE admins;
 INSERT INTO admins (id, username, password) VALUES
-                                                ('1' , 'admin1' , 'admin1')
+                                                ('1' , 'admin1' , '$2a$10$NTcwhcUQHM1u4UVyanw8OO/eLIl9FotZL/.DeO/VFedj6YO21K36a')
